@@ -3,9 +3,5 @@ is
 home
 made
 work
-<<<<<<< HEAD
 monday evening
-=======
-monday evening
-this is master
->>>>>>> remotes/origin/master
+this is t2br version
