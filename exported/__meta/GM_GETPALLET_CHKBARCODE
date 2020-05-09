@@ -1,0 +1,14 @@
+{
+    "src": "select * from GM_GETPALLET_CHKBARCODE(\n<dtml-sqlvar BARCODE type=\"string\" optional>,\n<dtml-sqlvar ID_EMPL type=\"int\" optional>,\n<dtml-sqlvar ID_SHTASK type=\"int\" optional>,\n<dtml-sqlvar ID_PALLET type=\"int\" optional>\n)", 
+    "arguments_src": "BARCODE\r\nID_EMPL\r\nID_SHTASK\r\nID_PALLET", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'ID_PALLET': {}, 'BARCODE': {}, 'ID_SHTASK': {}, 'ID_EMPL': {}}, '_keys': ['BARCODE', 'ID_EMPL', 'ID_SHTASK', 'ID_PALLET']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_GETPALLET_CHKBARCODE(\\n<dtml-sqlvar BARCODE type=\"string\" optional>,\\n<dtml-sqlvar ID_EMPL type=\"int\" optional>,\\n<dtml-sqlvar ID_SHTASK type=\"int\" optional>,\\n<dtml-sqlvar ID_PALLET type=\"int\" optional>\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x036ECD88>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_GETPALLET_CHKBARCODE"
+}

@@ -1,0 +1,13 @@
+{
+    "title": "", 
+    "content_type": "text/html", 
+    "_text": "<html metal:use-macro=\"here/main_template/macros/page\">\n    <script  metal:fill-slot=\"script\" tal:content=\"python:'function init(){OnBodyLoad(\\'tid\\',\\'tid\\');}'\"/>\n    <div align=\"justify\" metal:fill-slot=\"error\" class=\"error\" tal:condition=\"request/err|options/err|nothing\" tal:content=\"structure request/err|options/err\"/>\n    <div aling=\"justify\" tal:condition=\"request/warn|options/warn|nothing\" tal:content=\"structure request/warn|options/warn\" />\n    <div metal:fill-slot=\"data\" align=\"center\" style=\"font-size:11px\">\n    <div id=\"errorblock\" class=\"error\"></div>\n    <script language=\"javascript\">\n     function submit_all(){\n     if (document.getElementById('errorblock').innerHTML != '') \n\t{\n         document.getElementById('finish').href = '#';\n         return false;\n        }\n     document.getElementById('errorblock').innerHTML = 'Дождитесь выполнения операции для продолжения работы'; \n     }\n    </script>\n    Фиксация времени приезда/отъезда авто <br>\n    <br>\n    \n    <form action='routeAction'>\n        Отсканируйте ШК тележки<br>\n        <input type='text' name='tid' id='tid' maxlength=\"40\">\n        <input type='hidden' name='uid' tal:attributes='value request/uid'>\n        <input type='hidden' name='id_site' tal:attributes='value options/id_site'>\n        <input type='hidden' name='id_shtask' tal:attributes='value options/id_shtask'>\n        <input type='hidden' name='act' value='scan1'>\n    </form>    \n    <br>\n   \n    <span tal:condition=\"python: options.get('route_list') != None and len(options['route_list'])\">\n        Незавершенные маршруты:<br>\n        <span tal:repeat=\"item python: options['route_list']\">\n            <a tal:attributes=\"href python: 'routeAction?uid=%s&id_site=%s&id_shtask=%s&id_route=%s&act=select_route' % (request.uid, options.get('id_site'), options.get('id_shtask'), item.ID_ROUTE)\" tal:content=\"item/ID_ROUTE\" /> <br>\n        </span>\n    <br>\n    </span>\n    \n    <a id='back' tal:attributes=\"href python: 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'))\">Назад</a>\n    <br><a id='index' tal:attributes=\"href python: '../taskListAction?uid=%s&exit=true'%(request.uid)\">Выход в главное меню</a>\n    </div> \n</html>", 
+    "_bind_names": "<Shared_DC_Scripts_Bindings_NameAssignments dict={'_asgns': {'name_subpath': 'traverse_subpath'}}>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "frm_listCarRoute", 
+    "expand": 0
+}

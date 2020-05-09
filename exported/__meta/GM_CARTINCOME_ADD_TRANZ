@@ -1,0 +1,22 @@
+{
+    "src": "select * from GM_CARTINCOME_ADD_TRANZ(\n<dtml-sqlvar ID_EMPL type=\"int\">,\n<dtml-sqlvar BARCODE type=\"string\">,\n<dtml-sqlvar ID_OP type=\"int\" optional>\n)", 
+    "arguments_src": "ID_EMPL\r\nBARCODE\r\nID_OP", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'BARCODE': {}, 'ID_OP': {}, 'ID_EMPL': {}}, '_keys': ['ID_EMPL', 'BARCODE', 'ID_OP']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_CARTINCOME_ADD_TRANZ(\\n<dtml-sqlvar ID_EMPL type=\"int\">,\\n<dtml-sqlvar BARCODE type=\"string\">,\\n<dtml-sqlvar ID_OP type=\"int\" optional>\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x036ECC00>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 255, 
+            "null": true, 
+            "type": "s", 
+            "name": "MES"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_CARTINCOME_ADD_TRANZ"
+}

@@ -1,0 +1,3 @@
+select * from GM_GETPALLET_FINISHTASK(
+<dtml-sqlvar ID_SHTASK type="int">
+)

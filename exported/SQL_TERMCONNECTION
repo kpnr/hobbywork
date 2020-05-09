@@ -1,0 +1,3 @@
+select max(ID_SHTERMCON) AS ID_SHTERMCON from SH_TERMCONNECTION
+where DISCONNECTTIME is null
+and ID_EMPL=<dtml-sqlvar ID_EMPL type="int">

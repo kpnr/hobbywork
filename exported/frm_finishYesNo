@@ -1,0 +1,11 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'\',\'\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+    
+    <div metal:fill-slot="data" align="center" style="font-size:11px">
+    Проверьте, пожалуйста, все ли тележки отражены в документе. Завершить приемку?
+    <br>
+    <br><a id='back' onclick='lockPage();' tal:attributes="href python: 'taskAction?uid=%s&endflagok=true&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'))">Да</a> | 
+    <a id='back' tal:attributes="href python: 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'))">Нет</a>
+    </div> 
+</html>

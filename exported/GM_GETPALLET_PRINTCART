@@ -1,0 +1,6 @@
+select * from GM_GETPALLET_PRINTCART(
+<dtml-sqlvar ID_SHTASK type="int">,
+<dtml-sqlvar ID_EMPL type="int">,
+<dtml-sqlvar PRINTERBARCODE type="string" optional>,
+<dtml-sqlvar LABELBARCODE type="string" optional>
+)

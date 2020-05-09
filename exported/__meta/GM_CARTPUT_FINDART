@@ -1,0 +1,14 @@
+{
+    "src": "select * from GM_GET_BARCODE_TASK(\n<dtml-sqlvar BARCODE type=\"string\" optional>,\n<dtml-sqlvar ID_SHTASK type=\"int\" optional>\n)", 
+    "arguments_src": "ID_SHTASK\r\nBARCODE", 
+    "title": "GM_CARTPUT_FINDART", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'BARCODE': {}, 'ID_SHTASK': {}}, '_keys': ['ID_SHTASK', 'BARCODE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_GET_BARCODE_TASK(\\n<dtml-sqlvar BARCODE type=\"string\" optional>,\\n<dtml-sqlvar ID_SHTASK type=\"int\" optional>\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x0367CDC0>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_CARTPUT_FINDART"
+}

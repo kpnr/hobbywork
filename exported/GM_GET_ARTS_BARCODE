@@ -1,0 +1,3 @@
+select ID_ART, NAME from GM_GET_ARTS_BARCODE(
+<dtml-sqlvar BARCODE type="string">
+)  group by ID_ART, NAME

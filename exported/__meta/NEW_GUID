@@ -1,0 +1,22 @@
+{
+    "src": "select rupper(createguid()) GUID from sh_config", 
+    "arguments_src": "", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {}, '_keys': []}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select rupper(createguid()) GUID from sh_config', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x036DEED8>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 255, 
+            "null": true, 
+            "type": "s", 
+            "name": "GUID"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "NEW_GUID"
+}

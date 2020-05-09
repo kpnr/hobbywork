@@ -1,0 +1,31 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'\',\'\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+
+    <div metal:fill-slot="data" align="center" style="font-size:11px">
+
+    <b><span tal:content="options/opnumber"></span></b>
+    <br>
+    Принятые тележки:
+    <br><br>
+    
+    <span tal:condition="python: options.get('cartlist') != None">
+        <table bgcolor="#ffffff" border='0' cellspacing=1>
+            <tr class="tabcaption">
+                <td width="100">Номер</td>
+            </tr>
+            <span tal:repeat="item python: options['cartlist']">
+                <tr bgcolor="#000000" align="center">
+                    <td>
+                        <span tal:condition="python: item.ISTRANZ == 1">Тележка </span>
+                        <a href="#" tal:content="item/ID_OBJECT"/>
+                    </td>
+                </tr>
+            </span>
+        </table>
+    </span>
+    
+    <br>
+    <br><a id='back' tal:attributes="href python: 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'))">Назад</a>
+    </div> 
+</html>

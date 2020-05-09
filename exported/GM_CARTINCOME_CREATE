@@ -1,0 +1,5 @@
+select * from GM_CARTINCOME_CREATE(
+<dtml-sqlvar ID_EMPL type="int">,
+<dtml-sqlvar BARCODEEX type="string">,
+<dtml-sqlvar BARCODE type="string">
+)

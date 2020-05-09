@@ -1,0 +1,28 @@
+{
+    "src": "select * from GM_GETPALLET_CART_ARTS(\n<dtml-sqlvar ID_SHTASKP type=\"int\" >,\n<dtml-sqlvar ID_SHTASKT type=\"int\" >,\n<dtml-sqlvar MODE type=\"int\" >\n)", 
+    "arguments_src": "ID_SHTASKP\r\nID_SHTASKT\r\nMODE", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'ID_SHTASKT': {}, 'MODE': {}, 'ID_SHTASKP': {}}, '_keys': ['ID_SHTASKP', 'ID_SHTASKT', 'MODE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_GETPALLET_CART_ARTS(\\n<dtml-sqlvar ID_SHTASKP type=\"int\" >,\\n<dtml-sqlvar ID_SHTASKT type=\"int\" >,\\n<dtml-sqlvar MODE type=\"int\" >\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x036FB3E8>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 60, 
+            "null": true, 
+            "type": "s", 
+            "name": "ARTNAME"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ARTREST"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_GETPALLET_CART_ARTS"
+}

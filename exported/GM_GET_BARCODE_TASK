@@ -1,0 +1,4 @@
+select * from GM_GET_BARCODE_TASK(
+<dtml-sqlvar BARCODE type="string" optional>,
+<dtml-sqlvar ID_SHTASK type="int" optional>
+)

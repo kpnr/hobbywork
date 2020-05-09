@@ -1,0 +1,11 @@
+{
+    "_module": "network", 
+    "_function": "sendSocketData", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "network", 
+    "title": "network"
+}

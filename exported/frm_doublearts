@@ -1,0 +1,18 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'\',\'barcode\',\'\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+    
+    <div metal:fill-slot="data" align="center">
+        <b tal:content="options/mes"/><br>
+        <div style="width: 240px; word-break: break-all;">
+        <span tal:repeat="item options/data">
+            <a tal:attributes="href python:'gettelegaAction?uid=%s&id=%s&id_shtask=%s&outurl=%s&tcode=%s&tovarid=%s' % (request.uid, item.ID_ART, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tovarid'))">
+                <span class="smalltext" tal:content="item/NAME"/>
+            </a> 
+            <br>
+        </span> 
+        </div>
+        <br>
+        <a id='back' tal:attributes="href python: 'gettelegaAction?uid=%s&id_shtask=%s&outurl=%s&tcode=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'))">Назад</a>
+    </div>
+</html>

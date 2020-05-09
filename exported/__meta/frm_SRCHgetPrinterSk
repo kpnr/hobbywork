@@ -1,0 +1,13 @@
+{
+    "title": "", 
+    "content_type": "text/html", 
+    "_text": "<html metal:use-macro=\"here/main_template/macros/page\">\n    <script  metal:fill-slot=\"script\" tal:content=\"python:'function init(){OnBodyLoad(\\'printersk\\',\\'printersk\\');}'\"/>\n    <div align=\"justify\" metal:fill-slot=\"error\" class=\"error\" tal:condition=\"request/err|options/err|nothing\" tal:content=\"structure request/err|options/err\"/>\n\n    <div metal:fill-slot=\"data\" align=\"center\" style=\"font-size:11px\">\n    <form action='gettelegaAction'>\n        Отсканируйте ШК принтера:<br>\n        <input type='text' name='printersk' id='printersk' maxlength=\"40\">\n        <input type='hidden' name='act' value='prn_printersk'>\n        <input type='hidden' name='uid' tal:attributes='value request/uid'>\n        <input type='hidden' name='outurl' tal:attributes='value request/outurl'>\n        <input type='hidden' name='tcode' tal:attributes='value options/tcode'>\n        <input type='hidden' name='id_shtask' tal:attributes='value options/id_shtask'>\n        <input type='hidden' name='id_cart' tal:attributes='value options/id_cart'>\n    </form>\n    </div> \n</html>", 
+    "_bind_names": "<Shared_DC_Scripts_Bindings_NameAssignments dict={'_asgns': {'name_subpath': 'traverse_subpath'}}>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "frm_SRCHgetPrinterSk", 
+    "expand": 0
+}

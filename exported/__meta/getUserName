@@ -1,0 +1,20 @@
+{
+    "Python_magic": "mr\n", 
+    "errors": [], 
+    "warnings": [], 
+    "Script_magic": 3, 
+    "_body": "for i in container.getName(id_empl=uid):\n        name=i.NAME\nreturn name\n", 
+    "_filepath": "Script (Python):/hms/iface/INPUT_TEL/getUserName", 
+    "_code": "c\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0000\u0000\u0000@\u0000\u0000\u0000s\r\u0000\u0000\u0000d\u0001\u0000Ыu0000\u0000Z\u0000\u0000d\u0000\u0000S(\u0002\u0000\u0000\u0000Nc\u0001\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0007\u0000\u0000\u0000C\u0000\u0000\u0000s@\u0000\u0000\u0000x5\u0000t\u0000\u0000t\u0001\u0000t\u0002\u0000d\u0001\u0000ソu0002\u0000d\u0002\u0000|\u0000\u0000ソu0000\u0001ソu0001\u0000D]\u0015\u0000}\u0004\u0000t\u0001\u0000|\u0004\u0000d\u0003\u0000ソu0002\u0000}\u0005\u0000q\u001f\u0000W|\u0005\u0000Sd\u0000\u0000S(\u0004\u0000\u0000\u0000Nt\u0007\u0000\u0000\u0000getNamet\u0007\u0000\u0000\u0000id_emplt\u0004\u0000\u0000\u0000NAME(\u0006\u0000\u0000\u0000t\t\u0000\u0000\u0000_getiter_t\t\u0000\u0000\u0000_getattr_t\t\u0000\u0000\u0000containert\u0003\u0000\u0000\u0000uidt\u0001\u0000\u0000\u0000it\u0004\u0000\u0000\u0000name(\u0006\u0000\u0000\u0000R\u0006\u0000\u0000\u0000R\u0003\u0000\u0000\u0000R\u0004\u0000\u0000\u0000R\u0005\u0000\u0000\u0000R\u0007\u0000\u0000\u0000R\b\u0000\u0000\u0000(\u0000\u0000\u0000\u0000(\u0000\u0000\u0000\u0000s\u000f\u0000\u0000\u0000Script (Python)s\u000b\u0000\u0000\u0000getUserName\u0001\u0000\u0000\u0000s\u0006\u0000\u0000\u0000\u001f\u0000\u0006\u0001\u0013\u0001(\u0001\u0000\u0000\u0000t\u000b\u0000\u0000\u0000getUserName(\u0001\u0000\u0000\u0000R\t\u0000\u0000\u0000(\u0000\u0000\u0000\u0000(\u0000\u0000\u0000\u0000s\u000f\u0000\u0000\u0000Script (Python)s\b\u0000\u0000\u0000<module>\u0001\u0000\u0000\u0000t\u0000\u0000\u0000\u0000", 
+    "func_defaults": null, 
+    "_bind_names": "<Shared_DC_Scripts_Bindings_NameAssignments dict={'_asgns': {'name_container': 'container', 'name_context': 'context', 'name_subpath': 'traverse_subpath', 'name_m_self': 'script'}}>", 
+    "_dav_writelocks": "<Ghost dict=\u0000\u0000\u0000\u0000\u0000\u0000\u00009>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "getUserName", 
+    "_params": "uid", 
+    "func_code": "<Shared_DC_Scripts_Signature_FuncCode dict={'co_argcount': 1, 'co_varnames': ('uid', '_getiter_', '_getattr_', 'container', 'i', 'name')}>"
+}

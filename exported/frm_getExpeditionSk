@@ -1,0 +1,13 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'mpsk\',\'mpsk\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+
+    <div metal:fill-slot="data" align="center" style="font-size:11px">
+    <form action='taskAction'>
+        Отсканируйте ШК экспедиции:<br>
+        <input type='text' name='mpsk' id='mpsk' maxlength="40">
+        <input type='hidden' name='uid' tal:attributes='value request/uid'>
+    </form>
+    <br><a  id='back' tal:attributes="href python: '../taskListAction?uid=%s&exit=true'%(request.uid)">Выход</a>
+    </div> 
+</html>

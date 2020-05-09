@@ -1,0 +1,6 @@
+select * from GM_GETPALLET_CHKBARCODE(
+<dtml-sqlvar BARCODE type="string" optional>,
+<dtml-sqlvar ID_EMPL type="int" optional>,
+<dtml-sqlvar ID_SHTASK type="int" optional>,
+<dtml-sqlvar ID_PALLET type="int" optional>
+)

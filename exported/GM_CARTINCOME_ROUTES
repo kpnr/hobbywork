@@ -1,0 +1,9 @@
+select * from GM_CARTINCOME_ROUTES(
+<dtml-sqlvar BARCODE type="string">,
+<dtml-sqlvar CHECK_TYPE type="string">,
+<dtml-sqlvar ID_ROUTE_IN type="int">,
+<dtml-sqlvar DATE_OUT type="string">,
+<dtml-sqlvar RESERVED1 type="int" optional>,
+<dtml-sqlvar RESERVED2 type="int" optional>,
+<dtml-sqlvar RESERVED3 type="int" optional>
+)

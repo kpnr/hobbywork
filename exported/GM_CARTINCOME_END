@@ -1,0 +1,4 @@
+select * from GM_CARTINCOME_END(
+<dtml-sqlvar ID_SHTASK type="int">,
+<dtml-sqlvar BARCODESITE type="int">
+)

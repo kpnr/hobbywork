@@ -1,0 +1,70 @@
+{
+    "src": "select * from GM_GETSITE(\n<dtml-sqlvar ID_SITE type=\"int\" optional>,    \n<dtml-sqlvar BARCODE type=\"string\" optional>\n)", 
+    "arguments_src": "ID_SITE\r\nBARCODE", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'ID_SITE': {}, 'BARCODE': {}}, '_keys': ['ID_SITE', 'BARCODE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_GETSITE(\\n<dtml-sqlvar ID_SITE type=\"int\" optional>,    \\n<dtml-sqlvar BARCODE type=\"string\" optional>\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x036DE420>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_SITE"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_SITETYPE"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_SITETYPETYPE"
+        }, 
+        {
+            "width": 10, 
+            "null": true, 
+            "type": "s", 
+            "name": "CODETYPE"
+        }, 
+        {
+            "width": 10, 
+            "null": true, 
+            "type": "s", 
+            "name": "CODETYPETYPE"
+        }, 
+        {
+            "width": 60, 
+            "null": true, 
+            "type": "s", 
+            "name": "NAME"
+        }, 
+        {
+            "width": 128, 
+            "null": true, 
+            "type": "s", 
+            "name": "FULLNAME"
+        }, 
+        {
+            "width": 60, 
+            "null": true, 
+            "type": "s", 
+            "name": "NAMETYPE"
+        }, 
+        {
+            "width": 60, 
+            "null": true, 
+            "type": "s", 
+            "name": "NAMETYPETYPE"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_GETSITE"
+}

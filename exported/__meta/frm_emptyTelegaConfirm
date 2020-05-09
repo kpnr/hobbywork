@@ -1,0 +1,13 @@
+{
+    "title": "", 
+    "content_type": "text/html", 
+    "_text": "<html metal:use-macro=\"here/main_template/macros/page\">\n    <script  metal:fill-slot=\"script\" tal:content=\"python:'function init(){OnBodyLoad(\\'\\',\\'\\');}'\"/>\n    <div align=\"justify\" metal:fill-slot=\"error\" class=\"error\" tal:condition=\"request/err|options/err|nothing\" tal:content=\"structure request/err|options/err\"/>\n    \n    <div metal:fill-slot=\"data\" align=\"center\" style=\"font-size:11px\">\n        Нет данных по тележке, вы уверены, что хотите принять ее?\n        <br>\n        <br><a id='back' tal:attributes=\"href python: 'taskAction?uid=%s&emptyconfirm=true&id_site=%s&id_shtask=%s&BARCODENOTEX=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'), options.get('BARCODENOTEX'))\">Да</a> | \n        <a id='back' tal:attributes=\"href python: 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'))\">Нет</a>\n    </div> \n</html>", 
+    "_bind_names": "<Shared_DC_Scripts_Bindings_NameAssignments dict={'_asgns': {'name_subpath': 'traverse_subpath'}}>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "frm_emptyTelegaConfirm", 
+    "expand": 0
+}

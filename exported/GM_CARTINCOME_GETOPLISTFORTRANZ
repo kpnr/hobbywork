@@ -1,0 +1,4 @@
+select * from GM_CARTINCOME_GETOPLISTFORTRANZ(
+<dtml-sqlvar VOPNUMBER type="string">,
+<dtml-sqlvar VNUMTASK type="int">
+)

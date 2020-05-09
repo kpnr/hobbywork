@@ -1,0 +1,3 @@
+select * from GM_CARTINCOME_GETTASKINFO(
+<dtml-sqlvar BARCODE type="string">
+)

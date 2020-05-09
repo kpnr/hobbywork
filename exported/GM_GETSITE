@@ -1,0 +1,4 @@
+select * from GM_GETSITE(
+<dtml-sqlvar ID_SITE type="int" optional>,    
+<dtml-sqlvar BARCODE type="string" optional>
+)

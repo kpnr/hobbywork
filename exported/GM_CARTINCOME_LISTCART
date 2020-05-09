@@ -1,0 +1,4 @@
+select * from GM_CARTINCOME_LISTCART(
+<dtml-sqlvar ID_OP type="int">,
+<dtml-sqlvar ID_EMPL type="int">
+)

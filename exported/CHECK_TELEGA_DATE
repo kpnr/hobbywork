@@ -1,0 +1,3 @@
+select 1 as is_old, op.opdate from sh_task tk
+left join operation op on op.ID_OP = tk.id_op
+where id_shtask = <dtml-sqlvar TASK_ID type="int"> and op.opdate > current_timestamp - 30

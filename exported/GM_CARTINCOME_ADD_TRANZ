@@ -1,0 +1,5 @@
+select * from GM_CARTINCOME_ADD_TRANZ(
+<dtml-sqlvar ID_EMPL type="int">,
+<dtml-sqlvar BARCODE type="string">,
+<dtml-sqlvar ID_OP type="int" optional>
+)

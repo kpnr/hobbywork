@@ -1,0 +1,4 @@
+select * from SH_JOINSITE(
+<dtml-sqlvar ID_SHTASK type="int">,
+<dtml-sqlvar BARCODE type="string">
+)

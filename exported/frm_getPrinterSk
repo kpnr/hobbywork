@@ -1,0 +1,14 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'printersk\',\'printersk\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+
+    <div metal:fill-slot="data" align="center" style="font-size:11px">
+    <form action='taskAction'>
+        Отсканируйте ШК принтера:<br>
+        <input type='text' name='printersk' id='printersk' maxlength="40">
+        <input type='hidden' name='uid' tal:attributes='value request/uid'>
+        <input type='hidden' name='id_site' tal:attributes='value options/id_site'>
+        <input type='hidden' name='id_shtask' tal:attributes='value options/id_shtask'>
+    </form>
+    </div> 
+</html>

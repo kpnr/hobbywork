@@ -1,0 +1,1 @@
+select NAME from SH_GETNAME(<dtml-sqlvar id_empl type="string">)

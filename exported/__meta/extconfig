@@ -1,0 +1,11 @@
+{
+    "_module": "extconfig", 
+    "_function": "getsettings", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "extconfig", 
+    "title": "Внешние настройки"
+}

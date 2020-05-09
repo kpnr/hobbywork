@@ -1,0 +1,28 @@
+{
+    "src": "select 1 as is_old, op.opdate from sh_task tk\nleft join operation op on op.ID_OP = tk.id_op\nwhere id_shtask = <dtml-sqlvar TASK_ID type=\"int\"> and op.opdate > current_timestamp - 30\n", 
+    "arguments_src": "TASK_ID", 
+    "title": "Проверка даты операции тележки", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'TASK_ID': {}}, '_keys': ['TASK_ID']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select 1 as is_old, op.opdate from sh_task tk\\nleft join operation op on op.ID_OP = tk.id_op\\nwhere id_shtask = <dtml-sqlvar TASK_ID type=\"int\"> and op.opdate > current_timestamp - 30\\n', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x036DE298>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 0, 
+            "null": false, 
+            "type": "n", 
+            "name": "IS_OLD"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "d", 
+            "name": "OPDATE"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "CHECK_TELEGA_DATE"
+}

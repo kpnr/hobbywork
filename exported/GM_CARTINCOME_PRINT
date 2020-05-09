@@ -1,0 +1,4 @@
+select * from GM_CARTINCOME_PRINT(
+<dtml-sqlvar ID_EMPL type="int">,
+<dtml-sqlvar PRINTERBARCODE type="string">
+)

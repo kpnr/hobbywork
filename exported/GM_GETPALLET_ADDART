@@ -1,0 +1,5 @@
+select * from GM_GETPALLET_ADDART
+(
+<dtml-sqlvar ID_SHTASK type="int">,
+<dtml-sqlvar ID_ART type="int"> 
+)

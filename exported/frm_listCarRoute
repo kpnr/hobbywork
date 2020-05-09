@@ -1,0 +1,41 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'tid\',\'tid\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+    <div aling="justify" tal:condition="request/warn|options/warn|nothing" tal:content="structure request/warn|options/warn" />
+    <div metal:fill-slot="data" align="center" style="font-size:11px">
+    <div id="errorblock" class="error"></div>
+    <script language="javascript">
+     function submit_all(){
+     if (document.getElementById('errorblock').innerHTML != '') 
+	{
+         document.getElementById('finish').href = '#';
+         return false;
+        }
+     document.getElementById('errorblock').innerHTML = 'Дождитесь выполнения операции для продолжения работы'; 
+     }
+    </script>
+    Фиксация времени приезда/отъезда авто <br>
+    <br>
+    
+    <form action='routeAction'>
+        Отсканируйте ШК тележки<br>
+        <input type='text' name='tid' id='tid' maxlength="40">
+        <input type='hidden' name='uid' tal:attributes='value request/uid'>
+        <input type='hidden' name='id_site' tal:attributes='value options/id_site'>
+        <input type='hidden' name='id_shtask' tal:attributes='value options/id_shtask'>
+        <input type='hidden' name='act' value='scan1'>
+    </form>    
+    <br>
+   
+    <span tal:condition="python: options.get('route_list') != None and len(options['route_list'])">
+        Незавершенные маршруты:<br>
+        <span tal:repeat="item python: options['route_list']">
+            <a tal:attributes="href python: 'routeAction?uid=%s&id_site=%s&id_shtask=%s&id_route=%s&act=select_route' % (request.uid, options.get('id_site'), options.get('id_shtask'), item.ID_ROUTE)" tal:content="item/ID_ROUTE" /> <br>
+        </span>
+    <br>
+    </span>
+    
+    <a id='back' tal:attributes="href python: 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'))">Назад</a>
+    <br><a id='index' tal:attributes="href python: '../taskListAction?uid=%s&exit=true'%(request.uid)">Выход в главное меню</a>
+    </div> 
+</html>

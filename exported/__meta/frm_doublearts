@@ -1,0 +1,13 @@
+{
+    "title": "", 
+    "content_type": "text/html", 
+    "_text": "<html metal:use-macro=\"here/main_template/macros/page\">\n    <script  metal:fill-slot=\"script\" tal:content=\"python:'function init(){OnBodyLoad(\\'\\',\\'barcode\\',\\'\\');}'\"/>\n    <div align=\"justify\" metal:fill-slot=\"error\" class=\"error\" tal:condition=\"request/err|options/err|nothing\" tal:content=\"structure request/err|options/err\"/>\n    \n    <div metal:fill-slot=\"data\" align=\"center\">\n        <b tal:content=\"options/mes\"/><br>\n        <div style=\"width: 240px; word-break: break-all;\">\n        <span tal:repeat=\"item options/data\">\n            <a tal:attributes=\"href python:'gettelegaAction?uid=%s&id=%s&id_shtask=%s&outurl=%s&tcode=%s&tovarid=%s' % (request.uid, item.ID_ART, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tovarid'))\">\n                <span class=\"smalltext\" tal:content=\"item/NAME\"/>\n            </a> \n            <br>\n        </span> \n        </div>\n        <br>\n        <a id='back' tal:attributes=\"href python: 'gettelegaAction?uid=%s&id_shtask=%s&outurl=%s&tcode=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'))\">Назад</a>\n    </div>\n</html>\n", 
+    "_bind_names": "<Shared_DC_Scripts_Bindings_NameAssignments dict={'_asgns': {'name_subpath': 'traverse_subpath'}}>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "frm_doublearts", 
+    "expand": 0
+}

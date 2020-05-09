@@ -1,0 +1,49 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'tovarid\',\'tovarid\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+
+    <div metal:fill-slot="data" align="center" style="font-size:11px">
+    <b>Определение № тележки.</b><br>
+    <form action='gettelegaAction'>
+        Отсканируйте товары, лежащие на тележке:<br>
+        <input type='text' name='tovarid' id='tovarid' maxlength="40">
+        <input type='hidden' name='uid' tal:attributes='value request/uid'>
+        <input type='hidden' name='outurl' tal:attributes='value request/outurl'>
+        <input type='hidden' name='tcode' tal:attributes='value options/tcode'>
+        <input type='hidden' name='id_shtask' tal:attributes='value options/id_shtask'>
+    </form>
+    
+    <span tal:condition="python: options.get('currenttovar') is not None ">
+        <br>
+        Отсканировано товаров: <span tal:content="options/totalcnt"></span> шт.
+        <br><br>
+        <b><span tal:content="options/currenttovar"></span></b>
+        <br><br>
+    </span>
+    
+    <span tal:condition="python: options.get('alltovar') is not None">
+        Список вероятных номеров тележек:<br>
+        <table bgcolor="#ffffff" border='0' cellspacing=1>
+            <tr class="tabcaption" align="center">
+                <td width="90px">Тел/Опер/Дата</td>
+                <td width="60px">Совпало</td>
+                <td width="60px">Не совпало</td>
+            </tr>
+            <span tal:repeat="item python: options['alltovar']">
+                <tr bgcolor="#000000" align="center">
+                    <td>
+                     <a tal:attributes="href python: 'gettelegaAction?act=viewtelega&uid=%s&tid=%s&id_shtask=%s&outurl=%s&tcode=%s&tnumber=%s' % (request.uid, item.ID_SHTASK, options.get('id_shtask'), request.get('outurl'), options.get('tcode'), item.NUMBER)" tal:content="item/NUMBER" />
+                     <br />
+                     <span tal:content="python: item['op_number']" /><br /><span tal:content="python: item['op_date']" />
+                    </td>  
+                    <td tal:content="item/COUNTS"></td>
+                    <td tal:content="item/COUNTNS"></td>
+                </tr>
+            </span>
+        </table>
+    </span>
+    
+    <br>
+    <br><a id='back' tal:attributes="href python: '%s&cleansearch=1&cleanshtask=%s'%(request.outurl.decode('base64'), options.get('id_shtask'))">Назад</a>
+    </div> 
+</html>

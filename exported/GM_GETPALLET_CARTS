@@ -1,0 +1,4 @@
+select * from GM_GETPALLET_CARTS(
+<dtml-sqlvar ID_SHTASKP type="int">, 
+<dtml-sqlvar STTCODE type="string">
+)

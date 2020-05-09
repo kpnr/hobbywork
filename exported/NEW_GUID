@@ -1,0 +1,1 @@
+select rupper(createguid()) GUID from sh_config

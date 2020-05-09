@@ -1,0 +1,40 @@
+{
+    "src": "select * from GM_GETPALLET_CARTS(\n<dtml-sqlvar ID_SHTASKP type=\"int\">, \n<dtml-sqlvar STTCODE type=\"string\">\n)", 
+    "arguments_src": "ID_SHTASKP\r\nSTTCODE", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'ID_SHTASKP': {}, 'STTCODE': {}}, '_keys': ['ID_SHTASKP', 'STTCODE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_GETPALLET_CARTS(\\n<dtml-sqlvar ID_SHTASKP type=\"int\">, \\n<dtml-sqlvar STTCODE type=\"string\">\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x0367CED8>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_SHTASK"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "NUMBER"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "COUNTS"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "COUNTNS"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_GETPALLET_CARTS"
+}

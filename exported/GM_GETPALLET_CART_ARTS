@@ -1,0 +1,5 @@
+select * from GM_GETPALLET_CART_ARTS(
+<dtml-sqlvar ID_SHTASKP type="int" >,
+<dtml-sqlvar ID_SHTASKT type="int" >,
+<dtml-sqlvar MODE type="int" >
+)

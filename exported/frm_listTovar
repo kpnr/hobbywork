@@ -1,0 +1,64 @@
+<html metal:use-macro="here/main_template/macros/page">
+    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'\',\'\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+
+    <div metal:fill-slot="data" align="center" style="font-size:11px">
+    <b>Тележка №: <span tal:content="options/tnumber"></span></b><br>
+    
+    <br><a id='back' tal:attributes="href python: 'gettelegaAction?act=wantprint&uid=%s&id_shtask=%s&outurl=%s&tcode=%s&id_cart=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tid'))">Распечатать ШК</a><br>
+        
+   
+    <span tal:condition="python: options.get('t_ok') != None">
+            Совпадения:<br>
+        <table bgcolor="#ffffff" border='0' cellspacing=1 style="width: 240px !important;">
+            <tr class="tabcaption">
+                <td>Товар</td>
+                <td align="center">Ост</td>
+            </tr>
+            <span tal:repeat="item python: options['t_ok']">
+                <tr bgcolor="#000000">
+                    <td><div style="width: 180px; word-break: break-all !important;"><a href="#" tal:content="item/ARTNAME"/></div></td>
+                    <td tal:content="item/ARTREST" align="center"></td>
+                </tr>
+            </span>
+        </table>
+    </span>
+    
+    <span tal:condition="python: options.get('t_diff') != None">
+            Различия:<br>
+        <table bgcolor="#ffffff" border='0' cellspacing=1>
+            <tr class="tabcaption">
+                <td>Товар</td>
+                <td align="center">Ост</td>
+            </tr>
+            <span tal:repeat="item python: options['t_diff']">
+                <tr bgcolor="#000000">
+                    <td><a href="#" tal:content="item/ARTNAME"/></td>
+                    <td tal:content="item/ARTREST" align="center"></td>
+                </tr>
+            </span>
+        </table>
+    </span>
+    
+    <span tal:condition="python: options.get('t_notscaned') != None">
+            Не отсканировано с тележки:<br>
+        <table bgcolor="#ffffff" border='0' cellspacing=1>
+            <tr class="tabcaption">
+                <td>Товар</td>
+                <td align="center">Ост</td>
+            </tr>
+            <span tal:repeat="item python: options['t_notscaned']">
+                <tr bgcolor="#000000">
+                    <td><a href="#" tal:content="item/ARTNAME"/></td>
+                    <td tal:content="item/ARTREST" align="center"></td>
+                </tr>
+            </span>
+        </table>
+    </span>
+    
+    <br><a id='back' tal:attributes="href python: 'gettelegaAction?act=wantprint&uid=%s&id_shtask=%s&outurl=%s&tcode=%s&id_cart=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tid'))">Распечатать ШК</a><br>
+    
+    <br>
+    <br><a id='back' tal:attributes="href python: 'gettelegaAction?uid=%s&id_shtask=%s&outurl=%s&tcode=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'))">Назад</a>
+    </div> 
+</html>
