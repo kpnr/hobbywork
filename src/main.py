@@ -4,7 +4,7 @@ import re
 from gettext import gettext as _
 from dataclasses import dataclass
 from os import path, scandir, makedirs
-from typing import NewType, Optional, Set, List
+from typing import NewType, Optional, Set, List, Any, MutableMapping
 from sql_zope_cvt import SqlZopeDef
 
 
@@ -62,6 +62,25 @@ def settings_get() -> Settings:
 def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
   """:returns set of suggested interface names. May be empty."""
   sql_list: List[SqlZopeDef] = []
+  files_desc: MutableMapping[str, Any] = dict()
+
+  def file_describe(file_name_full: str, description: Any):
+    files_desc[file_name_full] = description
+    return
+
+  def files_desc_save():
+    desc_map = dict()
+    for name_full, desc in files_desc.items():
+      file_path = path.dirname(name_full)
+      file_name = path.basename(name_full)
+      dir_descs = desc_map.setdefault(file_path, dict())
+      dir_descs.update({file_name: desc})
+    for dir_name, files in desc_map.items():
+      desc_file_name = path.join(dir_name, 'descript.ion')
+      with open(desc_file_name, 'wt', encoding='utf8') as df:
+        for fn, fd in files.items():
+          print(f'{fn} {json.dumps(fd)}', file=df)
+    return
 
   def ygg_file_save() -> Optional[str]:
     """returns interface name if detected else None"""
@@ -73,22 +92,36 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
     def ygg_html_save():
       html_name = z_json['id']
       html_name = path.join(ygg_path, 'frontend', html_name+'.html')
+      file_describe(html_name, dict(type='template'))
       with open(html_name, 'wt', encoding='utf8') as yf:
         print(z_json['_text'], file=yf)
       return
 
     def ygg_py_save() -> str:
       """returns suggested interface name"""
-      py_name = z_json['id']
+      func_name = z_json['id']
+      py_name = func_name
       py_name = path.join(ygg_path, 'backend', py_name+'.py')
+      file_describe(py_name, dict(type='python'))
       with open(py_name, 'wt', encoding='utf8') as yf:
-        print(z_json['_body'], file=yf)
+        py_args = (x for x in ((z_json.get('_params', '')+ '\ncontainer').split('\n')) if x)
+        for s in (
+          f'def {func_name}({", ".join(py_args)}):',
+          f'  context = container  # Auto generated string',
+          f'  same_type = lambda o, t: isinstance(o, type(t))  # Auto generated string',
+          ):
+          print(s, file=yf)
+        for s in z_json['_body'].split('\n'):
+          if s:
+            s = '  '+s
+          print(s, file=yf)
       rv = z_json['_filepath'].split('/')[-2]
       return rv
 
     def ygg_module_save():
       py_name = z_json['id']
       py_name = path.join(ygg_path, 'backend', py_name+'.py')
+      file_describe(py_name, dict(type='external'))
       with open(py_name, 'at', encoding='utf8') as yf:
         print('# Модуль-заглушка. Реализацию придется искать самому', file=yf)
         print(f"# Назначение: {z_json['title']}", file=yf)
@@ -122,7 +155,10 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
     interface_name = ygg_file_save()
     if interface_name:
       interface_names.add(interface_name)
+  # finalization
+  # save all sql blocks into single py module
   db_api_name = path.join(ygg_path, 'backend', 'db_api.py')
+  file_describe(db_api_name, dict(type='db_api'))
   with open(db_api_name, 'wt', encoding='utf8') as yf:
     for s in (
       '# -*- coding: utf8 -*-\n'
@@ -136,6 +172,7 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
       print(s, file=yf)
     for sql in sql_list:
       print(sql.to_ygg(), file=yf)
+  files_desc_save()
   return interface_names
 
 
