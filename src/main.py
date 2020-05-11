@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from os import path, scandir, makedirs
 from typing import NewType, Optional, Set, List, Any, MutableMapping
 from sql_zope_cvt import SqlZopeDef
-
+from py_zope_cvt import py_zope_cvt
 
 DirPath = NewType('DirPath', str)
 
@@ -99,21 +99,11 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
 
     def ygg_py_save() -> str:
       """returns suggested interface name"""
-      func_name = z_json['id']
-      py_name = func_name
+      py_name = z_json['id']
       py_name = path.join(ygg_path, 'backend', py_name+'.py')
       file_describe(py_name, dict(type='python'))
       with open(py_name, 'wt', encoding='utf8') as yf:
-        py_args = (x for x in ((z_json.get('_params', '')+ '\ncontainer').split('\n')) if x)
-        for s in (
-          f'def {func_name}({", ".join(py_args)}):',
-          f'  context = container  # Auto generated string',
-          f'  same_type = lambda o, t: isinstance(o, type(t))  # Auto generated string',
-          ):
-          print(s, file=yf)
-        for s in z_json['_body'].split('\n'):
-          if s:
-            s = '  '+s
+        for s in py_zope_cvt(z_json):
           print(s, file=yf)
       rv = z_json['_filepath'].split('/')[-2]
       return rv
