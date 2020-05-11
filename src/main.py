@@ -7,6 +7,7 @@ from os import path, scandir, makedirs
 from typing import NewType, Optional, Set, List, Any, MutableMapping
 from sql_zope_cvt import SqlZopeDef
 from py_zope_cvt import py_zope_cvt
+from html_zope_cvt import html_zope_cvt
 
 DirPath = NewType('DirPath', str)
 
@@ -94,7 +95,8 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
       html_name = path.join(ygg_path, 'frontend', html_name+'.html')
       file_describe(html_name, dict(type='template'))
       with open(html_name, 'wt', encoding='utf8') as yf:
-        print(z_json['_text'], file=yf)
+        for s in html_zope_cvt(z_json):
+          print(s, file=yf)
       return
 
     def ygg_py_save() -> str:

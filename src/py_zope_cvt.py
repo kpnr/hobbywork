@@ -1,7 +1,7 @@
-from typing import Sequence, Mapping
+from typing import Mapping, Generator
 
 
-def py_zope_cvt(z_json: Mapping) -> Sequence[str]:
+def py_zope_cvt(z_json: Mapping) -> Generator[str, None, None]:
   func_name = z_json['id']
   py_args = (x for x in ((z_json.get('_params', '') + '\ncontainer').split('\n')) if x)
   for s in (
