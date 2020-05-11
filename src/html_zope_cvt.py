@@ -38,8 +38,9 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       def attrs_to_str(attrs: Mapping):
         rv = ''
         for k, v in attrs.items():
-          if not (v.startswith('{{') and v.endswith('}}')):
-            v = f'"{v}"'
+          # it seems Jinja handle expressions in double quoted strings
+          # if not (v.startswith('{{') and v.endswith('}}')):
+          v = f'"{v}"'
           rv += f' {k}={v}'
         return rv
       o = '<'+el.tag + attrs_to_str(el.attrib)
