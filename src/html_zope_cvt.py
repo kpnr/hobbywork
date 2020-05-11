@@ -26,8 +26,10 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
 </HTML>
 '''
   z_imports = set()
+  output_enabled = False
+  z_parse_out = []
 
-  def z_parse(el: Element, level: int) -> Sequence[str]:
+  def z_parse(el: Element, level: int) -> None:
     def z_import_add(i_name:str) -> None:
       z_imports.add(i_name)
       return
@@ -36,7 +38,9 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       def attrs_to_str(attrs: Mapping):
         rv = ''
         for k, v in attrs.items():
-          rv += f' {k}="{v}"'
+          if not (v.startswith('{{') and v.endswith('}}')):
+            v = f'"{v}"'
+          rv += f' {k}={v}'
         return rv
       o = '<'+el.tag + attrs_to_str(el.attrib)
       if len(el) or el.text:
@@ -47,9 +51,35 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
         c = ''
       return o, c
 
-    rv = []
-    indent = '  ' * level
-    level += 1
+    def emit(s: str) -> None:
+      if output_enabled:
+        indent = '  ' * level
+        z_parse_out.append(indent + s)
+      return
+
+    def tal_content_cvt(s: str) -> str:
+      s = s.strip(' \r\n\t')
+      if s.startswith('python:'):
+        s = s[len('python:'):].strip(' \r\n\t')
+      elif s.startswith('structure '):
+        s = s[len('structure '):]
+        s = tal_expression_cvt(s)
+      elif s.startswith('text '):
+        s = s[len('text '):]
+        s = tal_expression_cvt(s)
+      else:
+        s = tal_expression_cvt(s)
+      s = '{{ '+s+' }}'
+      return s
+
+    def tal_expression_cvt(s: str) -> str:
+      s = s.replace('/', '.')
+      s = s.replace('|', ' or ')
+      return s
+
+    nonlocal output_enabled
+    if output_enabled:
+      level += 1
     if el.text is not None:
       el.text = el.text.strip(' \n\t\r')
     if el.tail is not None:
@@ -59,50 +89,56 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       z_import_add(import_name)
     slot_name = el.attrib.pop('metal:fill-slot', '')
     if slot_name:
-      rv += [indent + '{%- block '+slot_name+' -%}']
-      rv += z_parse(el, level)
-      rv += [indent + '{%- endblock -%}']
-      return rv
+      assert not output_enabled
+      output_enabled = True
+      emit('{%- block '+slot_name+' -%}')
+      z_parse(el, level)
+      emit('{%- endblock -%}')
+      emit('')
+      output_enabled = False
+      return
     condition = el.attrib.pop('tal:condition', '')
     if condition:
-      rv += [indent + '{%- if ' + condition + ' -%}']
-      rv += z_parse(el, level)
-      rv += [indent + '{%- endif -%}']
-      return rv
+      condition = tal_expression_cvt(condition)
+      emit('{%- if ' + condition + ' -%}')
+      z_parse(el, level)
+      emit('{%- endif -%}')
+      return
     repeat = el.attrib.pop('tal:repeat', '')
     if repeat:
       repeat_var, repeat_expr = repeat.split(' ',1)
-      rv += [indent + '{%- for ' + repeat_var + ' in ' + repeat_expr + ' -%}']
-      rv += z_parse(el, level)
-      rv += [indent + '{%- end for -%}']
-      return rv
+      repeat_expr = tal_expression_cvt(repeat_expr)
+      emit('{%- for ' + repeat_var + ' in ' + repeat_expr + ' -%}')
+      z_parse(el, level)
+      emit('{%- endfor -%}')
+      return
     content = el.attrib.pop('tal:content', '')
     if content:
-      el.text = content
+      el.text = tal_content_cvt(content)
     attrs = el.attrib.pop('tal:attributes', '')
     if attrs:
       attrs = [a.strip(' ').split(' ', 1) for a in attrs.split(';')]
-      attrs = {a.strip(' '): v.strip(' ') for (a, v) in attrs}
+      attrs = {a.strip(' '): tal_content_cvt(v.strip(' ')) for (a, v) in attrs}
       el.attrib.update(attrs)
     if frozenset(el.attrib.keys()) - ATTRS_IGNORED:
       breakpoint()
     tag_open, tag_close = tag_open_close_get(el)
-    rv += [indent + tag_open]
+    emit(tag_open)
     if el.text:
-      rv += [indent + '  ' + el.text]
+      emit('  ' + el.text)
     for child in el:
-      rv += z_parse(child, level)
+      z_parse(child, level)
     if tag_close:
-      rv += [indent + tag_close]
+      emit(tag_close)
     if el.tail:
-      rv += [indent + el.tail]
-    return rv
+      emit(el.tail)
+    return
 
   parser = HTMLParser()
   doc = document_fromstring(z_json['_text'], parser, ensure_head_body=True)
-  rv = z_parse(doc, 0)
+  z_parse(doc, 0)
   for imp in z_imports:
     yield '{%- extends "' + imp + '" -%}'
-  for s in rv:
+  for s in z_parse_out:
     yield s
   return
