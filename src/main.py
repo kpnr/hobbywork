@@ -81,7 +81,7 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       desc_file_name = path.join(dir_name, 'descript.ion')
       with open(desc_file_name, 'wt', encoding='utf8') as df:
         for fn, fd in files.items():
-          print(f'{fn} {json.dumps(fd)}', file=df)
+          df.write(f'{fn} {json.dumps(fd)}\n')
     return
 
   def ygg_file_save() -> None:
@@ -96,7 +96,7 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       file_describe(html_name, dict(type='template'))
       with open(html_name, 'wt', encoding='utf8') as yf:
         for s in html_zope_cvt(z_json):
-          print(s, file=yf)
+          yf.write(s + '\n')
       return
 
     def ygg_py_save() -> None:
@@ -105,7 +105,7 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       file_describe(py_name, dict(type='python'))
       with open(py_name, 'wt', encoding='utf8') as yf:
         for s in py_zope_cvt(z_json):
-          print(s, file=yf)
+          yf.write(s + '\n')
       return
 
     def ygg_module_save():
@@ -144,60 +144,33 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
   db_api_name = path.join(backend_dir, 'db_api.py')
   file_describe(db_api_name, dict(type='db_api'))
   with open(db_api_name, 'wt', encoding='utf8') as yf:
-    for s in (
+    yf.write(
       '# -*- coding: utf8 -*-\n'
-      '# Этот файл сгенерирован автоматически.',
-      '# Для доступа к БД реализуйте функцию fetch_all\n'
-      'from typing import List',
-      'from box import Box\n\n',
-      'def fetch_all(sql: str, *args) -> List[Box]:',
-      '  raise NotImplementedError("Реализуй меня")\n',
-      ):
-      print(s, file=yf)
+      '# Этот файл сгенерирован автоматически.\n'
+      '# Для доступа к БД реализуйте функцию fetch_all\n\n'
+      'from typing import List\n'
+      'from box import Box\n\n\n'
+      'def fetch_all(sql: str, *args) -> List[Box]:\n'
+      '  raise NotImplementedError("Реализуй меня")\n\n\n'
+      )
     for sql in sql_list:
-      print(sql.to_ygg(), file=yf)
+      yf.write(sql.to_ygg() + '\n')
   # save module blocks
   for name, content in module_list.items():
     py_name = path.join(backend_dir, name + '.py')
     file_describe(py_name, dict(type='external'))
     with open(py_name, 'wt', encoding='utf8') as yf :
-      print('# Модуль-заглушка. Реализацию придется искать самому', file=yf)
-      print('', file=yf)
+      yf.write('# Модуль-заглушка. Реализацию придется искать самому\n\n')
       for func_name, func_def in content.items():
-        print("", file=yf)
-        print(f"def {func_def['_function']}():", file=yf)
-        print(f'  """Назначение: {func_def["title"]}"""', file=yf)
-        print("  raise NotImplementedError('Реализуй меня!')", file=yf)
-        print("", file=yf)
+        yf.write(
+          f"\ndef {func_def['_function']}():\n"
+          f'  """Назначение: {func_def["title"]}"""\n'
+          f"  raise NotImplementedError('Реализуй меня!')\n"
+          )
+      yf.write("\n")
   # save file descriptions
   files_desc_save()
   return interface_name
-
-
-def interface_name_choose(names: Set[str]) -> str:
-  # noinspection PyPep8Naming
-  NAME_RE = re.compile(r'^[A-Z_][A-Z_0-9]*$')
-  rv = ''
-  while not rv:
-    if len(names) == 0:
-      rv = input(_('Название интерфейса:'))
-      if not NAME_RE.match(rv):
-        rv = ''
-    elif 1 < len(names):
-      name_list = list(names)
-      print(_('Выбери название интерфейса:'))
-      for i, n in enumerate((x for x in name_list if NAME_RE.match(x)), 1):
-        print(_('({i: >3}) {n}').format(i=i, n=n))
-      i = input(_(':'))
-      # noinspection PyBroadException
-      try:
-        i = int(i)
-        rv = name_list[i-1]
-      except Exception:
-        rv = ''
-    else:
-      rv = names.pop()
-  return rv
 
 
 def main() -> int:
