@@ -1,0 +1,40 @@
+{
+    "src": "select * from GM_CARTINCOME_LIST_ROUTES(\n<dtml-sqlvar ID_ROUTE_IN type=\"int\">,\n<dtml-sqlvar DATE_OUT_CUR type=\"string\">,\n<dtml-sqlvar CHECK_NOT_END_ROUTE type=\"string\">,\n<dtml-sqlvar RESERVED1 type=\"int\" optional>,\n<dtml-sqlvar RESERVED2 type=\"int\" optional>,\n<dtml-sqlvar RESERVED3 type=\"int\" optional>\n)", 
+    "arguments_src": "ID_ROUTE_IN\r\nDATE_OUT_CUR\r\nCHECK_NOT_END_ROUTE", 
+    "title": "Получение списка маршрутов", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'DATE_OUT_CUR': {}, 'ID_ROUTE_IN': {}, 'CHECK_NOT_END_ROUTE': {}}, '_keys': ['ID_ROUTE_IN', 'DATE_OUT_CUR', 'CHECK_NOT_END_ROUTE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_CARTINCOME_LIST_ROUTES(\\n<dtml-sqlvar ID_ROUTE_IN type=\"int\">,\\n<dtml-sqlvar DATE_OUT_CUR type=\"string\">,\\n<dtml-sqlvar CHECK_NOT_END_ROUTE type=\"string\">,\\n<dtml-sqlvar RESERVED1 type=\"int\" optional>,\\n<dtml-sqlvar RESERVED2 type=\"int\" optional>,\\n<dtml-sqlvar RESERVED3 type=\"int\" optional>\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x02339870>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_SHTASK"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "NUMBER"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "COUNTS"
+        }, 
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "COUNTNS"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_CARTINCOME_LIST_ROUTES"
+}

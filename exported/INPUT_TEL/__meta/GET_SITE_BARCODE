@@ -1,0 +1,22 @@
+{
+    "src": "SELECT BARCODE FROM SITE WHERE ID_SITE = <dtml-sqlvar SITE_ID type=\"int\">\n", 
+    "arguments_src": "SITE_ID", 
+    "title": "Проверка даты операции тележки", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'SITE_ID': {}}, '_keys': ['SITE_ID']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'SELECT BARCODE FROM SITE WHERE ID_SITE = <dtml-sqlvar SITE_ID type=\"int\">\\n', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x02346C90>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 20, 
+            "null": true, 
+            "type": "s", 
+            "name": "BARCODE"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GET_SITE_BARCODE"
+}

@@ -25,7 +25,7 @@ def settings_get() -> Settings:
     if not path.isdir(s):
       raise argparse.ArgumentTypeError(_('%s должен быть каталогом') % s)
     if not path.isdir(path.join(s, '__meta')):
-      raise argparse.ArgumentTypeError(_('%s должен быть создан <zopeutil.py>') % s)
+      raise argparse.ArgumentTypeError(_('%s должен быть создан <zexpextract.py>') % s)
     return DirPath(s)
 
   def dir_may_exists(s: str) -> DirPath:
@@ -36,7 +36,7 @@ def settings_get() -> Settings:
 
   arg_parser = argparse.ArgumentParser(
     description=_('''Автоматический конвертор для интерфейсов ZOPE.
-  На вход требуется экспортированный с помощью zopeutil.py каталог интерфейса.
+  На вход требуется экспортированный с помощью zexpextract.py каталог интерфейса.
   На выходе получаем каталог yggdrasil интерфейса.'''),
     epilog='Made by pervushin_dg@magnit.ru 2020',
     fromfile_prefix_chars='@'
@@ -60,9 +60,10 @@ def settings_get() -> Settings:
   return rv
 
 
-def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
-  """:returns set of suggested interface names. May be empty."""
+def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
+  """:returns interface name"""
   sql_list: List[SqlZopeDef] = []
+  module_list: MutableMapping[str, dict] = dict()
   files_desc: MutableMapping[str, Any] = dict()
 
   def file_describe(file_name_full: str, description: Any):
@@ -83,73 +84,64 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
           print(f'{fn} {json.dumps(fd)}', file=df)
     return
 
-  def ygg_file_save() -> Optional[str]:
-    """returns interface name if detected else None"""
+  def ygg_file_save() -> None:
     def ygg_sql_save():
       rv = SqlZopeDef(z_json=z_json)
       sql_list.append(rv)
       return
 
-    def ygg_html_save():
+    def ygg_html_save() -> None:
       html_name = z_json['id']
-      html_name = path.join(ygg_path, 'frontend', html_name+'.html')
+      html_name = path.join(frontend_dir, html_name+'.html')
       file_describe(html_name, dict(type='template'))
       with open(html_name, 'wt', encoding='utf8') as yf:
         for s in html_zope_cvt(z_json):
           print(s, file=yf)
       return
 
-    def ygg_py_save() -> str:
-      """returns suggested interface name"""
+    def ygg_py_save() -> None:
       py_name = z_json['id']
-      py_name = path.join(ygg_path, 'backend', py_name+'.py')
+      py_name = path.join(backend_dir, py_name+'.py')
       file_describe(py_name, dict(type='python'))
       with open(py_name, 'wt', encoding='utf8') as yf:
         for s in py_zope_cvt(z_json):
           print(s, file=yf)
-      rv = z_json['_filepath'].split('/')[-2]
-      return rv
+      return
 
     def ygg_module_save():
       py_name = z_json['id']
-      py_name = path.join(ygg_path, 'backend', py_name+'.py')
-      file_describe(py_name, dict(type='external'))
-      with open(py_name, 'at', encoding='utf8') as yf:
-        print('# Модуль-заглушка. Реализацию придется искать самому', file=yf)
-        print(f"# Назначение: {z_json['title']}", file=yf)
-        print(f"def {z_json['_function']}():", file=yf)
-        print("  raise NotImplementedError('Реализуй меня!')", file=yf)
-        print("", file=yf)
+      module_content= module_list.setdefault(py_name, dict())
+      func_name = z_json['_function']
+      module_content[func_name] = z_json
       return
 
-    interface_name = None
     if z_json.get('connection_id') == 'Interbase_database_connection':
       ygg_sql_save()
     elif z_json.get('content_type') == 'text/html':
       ygg_html_save()
     elif 'Python_magic' in z_json:
-      interface_name = ygg_py_save()
+      ygg_py_save()
     elif '_module' in z_json:
       ygg_module_save()
     else:
       raise LookupError(_('Неизветный объект zope <%s>' % z_json[:1000]))
-    return interface_name
+    return
 
-  zope_meta_dir = path.join(zope_path, '__meta')
-  makedirs(path.join(ygg_path, 'frontend'), exist_ok=True)
-  makedirs(path.join(ygg_path, 'backend'), exist_ok=True)
-  interface_names = set()
+  zope_meta_dir = path.abspath(path.join(zope_path, '__meta'))
+  interface_name = path.basename(zope_path).upper()
+  frontend_dir = path.join(ygg_path, interface_name, 'frontend', interface_name)
+  backend_dir = path.join(ygg_path, interface_name, 'backend')
+  makedirs(frontend_dir, exist_ok=True)
+  makedirs(backend_dir, exist_ok=True)
   for file in scandir(zope_meta_dir):
     if not file.is_file():
       continue
     with open(file, 'rt', encoding='cp1251', errors='surrogateescape') as zf:
       z_json = json.load(zf)
-    interface_name = ygg_file_save()
-    if interface_name:
-      interface_names.add(interface_name)
+    ygg_file_save()
   # finalization
   # save all sql blocks into single py module
-  db_api_name = path.join(ygg_path, 'backend', 'db_api.py')
+  db_api_name = path.join(backend_dir, 'db_api.py')
   file_describe(db_api_name, dict(type='db_api'))
   with open(db_api_name, 'wt', encoding='utf8') as yf:
     for s in (
@@ -164,8 +156,22 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> Set[str]:
       print(s, file=yf)
     for sql in sql_list:
       print(sql.to_ygg(), file=yf)
+  # save module blocks
+  for name, content in module_list.items():
+    py_name = path.join(backend_dir, name + '.py')
+    file_describe(py_name, dict(type='external'))
+    with open(py_name, 'wt', encoding='utf8') as yf :
+      print('# Модуль-заглушка. Реализацию придется искать самому', file=yf)
+      print('', file=yf)
+      for func_name, func_def in content.items():
+        print("", file=yf)
+        print(f"def {func_def['_function']}():", file=yf)
+        print(f'  """Назначение: {func_def["title"]}"""', file=yf)
+        print("  raise NotImplementedError('Реализуй меня!')", file=yf)
+        print("", file=yf)
+  # save file descriptions
   files_desc_save()
-  return interface_names
+  return interface_name
 
 
 def interface_name_choose(names: Set[str]) -> str:
@@ -194,13 +200,13 @@ def interface_name_choose(names: Set[str]) -> str:
   return rv
 
 
-def main() -> None:
+def main() -> int:
   settings = settings_get()
-  interface_names = interface_copy(settings.source_dir, settings.destination_dir)
-  interface_name = interface_name_choose(interface_names)
+  interface_name = interface_copy(settings.source_dir, settings.destination_dir)
   print(_('Интерфейс %s готов, шеф!') % interface_name)
-  return
+  return 0
 
 
 if __name__ == '__main__':
-  main()
+  exit_code = main()
+  exit(exit_code)

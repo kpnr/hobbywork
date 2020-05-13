@@ -1,0 +1,28 @@
+{
+    "src": "select * from GM_CARTINCOME_ADD(\n<dtml-sqlvar ID_EMPL type=\"int\">,\n<dtml-sqlvar BARCODE type=\"string\"> \n)", 
+    "arguments_src": "ID_EMPL\r\nBARCODE", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'BARCODE': {}, 'ID_EMPL': {}}, '_keys': ['ID_EMPL', 'BARCODE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_CARTINCOME_ADD(\\n<dtml-sqlvar ID_EMPL type=\"int\">,\\n<dtml-sqlvar BARCODE type=\"string\"> \\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x02339A20>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_SHTASK"
+        }, 
+        {
+            "width": 255, 
+            "null": true, 
+            "type": "s", 
+            "name": "MES"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_CARTINCOME_ADD"
+}

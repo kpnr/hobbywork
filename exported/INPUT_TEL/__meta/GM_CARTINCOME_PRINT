@@ -1,0 +1,14 @@
+{
+    "src": "select * from GM_CARTINCOME_PRINT(\n<dtml-sqlvar ID_EMPL type=\"int\">,\n<dtml-sqlvar PRINTERBARCODE type=\"string\">\n)", 
+    "arguments_src": "ID_EMPL\r\nPRINTERBARCODE", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'PRINTERBARCODE': {}, 'ID_EMPL': {}}, '_keys': ['ID_EMPL', 'PRINTERBARCODE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select * from GM_CARTINCOME_PRINT(\\n<dtml-sqlvar ID_EMPL type=\"int\">,\\n<dtml-sqlvar PRINTERBARCODE type=\"string\">\\n)', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x0232FB70>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_CARTINCOME_PRINT"
+}

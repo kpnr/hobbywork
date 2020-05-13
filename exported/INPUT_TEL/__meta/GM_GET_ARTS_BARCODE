@@ -1,0 +1,28 @@
+{
+    "src": "select ID_ART, NAME from GM_GET_ARTS_BARCODE(\n<dtml-sqlvar BARCODE type=\"string\">\n)  group by ID_ART, NAME", 
+    "arguments_src": "BARCODE", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'BARCODE': {}}, '_keys': ['BARCODE']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select ID_ART, NAME from GM_GET_ARTS_BARCODE(\\n<dtml-sqlvar BARCODE type=\"string\">\\n)  group by ID_ART, NAME', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x0232FA80>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_ART"
+        }, 
+        {
+            "width": 80, 
+            "null": true, 
+            "type": "s", 
+            "name": "NAME"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "GM_GET_ARTS_BARCODE"
+}

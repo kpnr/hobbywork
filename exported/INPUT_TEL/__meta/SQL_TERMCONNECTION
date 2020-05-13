@@ -1,0 +1,22 @@
+{
+    "src": "select max(ID_SHTERMCON) AS ID_SHTERMCON from SH_TERMCONNECTION\nwhere DISCONNECTTIME is null\nand ID_EMPL=<dtml-sqlvar ID_EMPL type=\"int\">", 
+    "arguments_src": "ID_EMPL", 
+    "title": "", 
+    "connection_id": "Interbase_database_connection", 
+    "_arg": "<Shared_DC_ZRDB_Aqueduct_Args dict={'_data': {'ID_EMPL': {}}, '_keys': ['ID_EMPL']}>", 
+    "template": "<copy_reg___newobj__ dict={'_vars': {}, 'raw': 'select max(ID_SHTERMCON) AS ID_SHTERMCON from SH_TERMCONNECTION\\nwhere DISCONNECTTIME is null\\nand ID_EMPL=<dtml-sqlvar ID_EMPL type=\"int\">', 'argmt': [(<class __main__.Shared_DC_ZRDB_DA_SQL at 0x02346D80>,), {}], 'globals': {}, '__name__': '<string>'}>", 
+    "_col": [
+        {
+            "width": 0, 
+            "null": true, 
+            "type": "n", 
+            "name": "ID_SHTERMCON"
+        }
+    ], 
+    "__ac_local_roles__": {
+        "admin": [
+            "Owner"
+        ]
+    }, 
+    "id": "SQL_TERMCONNECTION"
+}

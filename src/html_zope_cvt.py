@@ -1,11 +1,29 @@
 from typing import Mapping, Sequence, Tuple
 from lxml.html import HTMLParser, Element, document_fromstring
 
+ATTRS_ALLOWED = frozenset(
+  'action align bgcolor border cellspacing class href id language length maxlength name onclick '
+  'style type '
+  'value width '
+  'metal:fill-slot metal:use-macro '
+  'tal:attributes tal:condition tal:content tal:repeat'.split(' ')
+  )
+
+def node_visit(el: Element) -> None:
+  REPLACE_NAMES = {
+    'aling': 'align'
+    }
+  for a_name in frozenset(el.attrib.keys()) - ATTRS_ALLOWED:
+    a_name_new = REPLACE_NAMES.get(a_name)
+    if a_name_new is not None:
+      a_value = el.attrib.pop(a_name)
+      if a_name_new:
+        el.attrib.update({a_name_new: a_value})
+    else:
+      breakpoint()
+  return
+
 def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
-  ATTRS_IGNORED = frozenset(
-    'action align bgcolor border cellspacing class href id language length maxlength name onclick '
-    'style type '
-    'value width'.split(' '))
   html_test = '''<HTML metal:use-macro="here/main_template/macros/page">
     <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'\',\'barcode\',\'\');}'"/>
     <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
@@ -79,6 +97,7 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       return s
 
     nonlocal output_enabled
+    node_visit(el)
     if output_enabled:
       level += 1
     if el.text is not None:
@@ -121,8 +140,6 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       attrs = [a.strip(' ').split(' ', 1) for a in attrs.split(';')]
       attrs = {a.strip(' '): tal_content_cvt(v.strip(' ')) for (a, v) in attrs}
       el.attrib.update(attrs)
-    if frozenset(el.attrib.keys()) - ATTRS_IGNORED:
-      breakpoint()
     tag_open, tag_close = tag_open_close_get(el)
     emit(tag_open)
     if el.text:
