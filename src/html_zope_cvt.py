@@ -48,7 +48,11 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
   z_parse_out = []
 
   def z_parse(el: Element, level: int) -> None:
-    def z_import_add(i_name:str) -> None:
+    def z_import_add(i_name: str) -> None:
+      IMPORT_REPLACE = {
+        'here/main_template/macros/page': 'zope/main_template.html'
+        }
+      i_name = IMPORT_REPLACE.get(i_name, i_name)
       z_imports.add(i_name)
       return
 

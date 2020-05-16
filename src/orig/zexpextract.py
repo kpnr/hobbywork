@@ -165,11 +165,12 @@ def parseZobj(objs):
         index[i[0]] = i[2]
     root = objs[0][2]
     flist = make_filelist(root, [root['id']], [], index)
+    if not flist:
+        flist.append({'node': root, 'path': [root['id']], 'meta_type': 'unknown'})
 
-    out = ""
     for item in flist:
         full_path = '/'.join(item['path'])
-        directory = os.path.dirname(full_path)
+        directory = os.path.dirname(full_path) or '.'
         if not os.path.exists(directory):
             os.makedirs(directory)
         if not os.path.exists(directory + '/__meta/'):
@@ -184,17 +185,17 @@ def parseZobj(objs):
                 if item['meta_type'] == 'File':
                     fh.write(item['node']['data'].oid if hasattr(item['node']['data'], 'oid') else item['node']['data'])
                 elif item['meta_type'] == 'Script (Python)':
-                    out += 'params:%s\n' % item['node'].get('_params', '')
                     fh.write(item['node']['_body'])
                 elif item['meta_type'] == 'Page Template':
-                    out += item['node']['_text']
                     fh.write(item['node']['_text'])
                 elif item['meta_type'] == 'Z SQL Method':
-                    out += 'params:%s\n' % item['node']['arguments_src']
-                    out += item['node']['src']
                     fh.write(item['node']['src'])
-        out += '\n\n'
-    return out
+                else:
+                    node = item['node']
+                    out = node.get('data', '') or node.get('_body', '') or node.get('_text', '')\
+                           or node.get('src', '') or 'WTF?'
+                    fh.write(out)
+    return
 
 
 def get_plain_content(fpath):

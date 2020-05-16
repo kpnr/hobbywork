@@ -179,6 +179,30 @@ def main() -> int:
   print(_('Интерфейс %s готов, шеф!') % interface_name)
   return 0
 
+def z_mod():
+  import ast
+  class ZDict(dict):
+    def has_key(self, key):
+      rv = key in self
+      return rv
+
+  def z_print(*args, **kwargs):
+    print('->')
+    rv = print(*args, **kwargs)
+    print('<-')
+    return rv
+  z_builtins = dict(__builtins__.__dict__)
+  z_builtins.update([('print',z_print), ('dict', ZDict)])
+
+  # z = importlib.__import__('z_module', z_builtins)
+  # import z_module as z
+  with open('./z_module.py', 'rt', encoding='utf8') as z_file:
+    z_src = z_file.read()
+  z_code = compile(z_src, './z_module.py', 'exec',  ast.PyCF_ONLY_AST , 1)
+  z_rv = exec(z_code, dict(__builtins__=z_builtins))
+  # z.__builtins__ = z_builtins
+  # z.taskAction()
+  return 0
 
 if __name__ == '__main__':
   exit_code = main()
