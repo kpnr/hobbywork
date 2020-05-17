@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 from dataclasses import dataclass
 from datetime import datetime
@@ -90,7 +91,7 @@ class SqlZopeDef(object):
         rv.append(f'{i.id}: {i.type.__name__}=None')
       return rv
 
-    rv = f'def {self.id}({", ".join(arg_defs_to_list(self.inputs))}) -> List[Box]:\n'
+    rv = f'def {self.id}({", ".join(arg_defs_to_list(self.inputs))}):\n'
     rv += f'  """\n{self.title}\n'
     rv += '  Output fields:\n    '
     rv += '\n    '.join(arg_defs_to_list(self.outputs))

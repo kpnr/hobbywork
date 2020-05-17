@@ -146,28 +146,23 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
   with open(db_api_name, 'wt', encoding='utf8') as yf:
     yf.write(
       '# -*- coding: utf8 -*-\n'
-      '# Этот файл сгенерирован автоматически.\n'
-      '# Для доступа к БД реализуйте функцию fetch_all\n\n'
-      'from typing import List\n'
-      'from box import Box\n\n\n'
-      'def fetch_all(sql: str, *args) -> List[Box]:\n'
-      '  raise NotImplementedError("Реализуй меня")\n\n\n'
+      '# Этот файл сгенерирован автоматически.\n\n\n'
       )
     for sql in sql_list:
       yf.write(sql.to_ygg() + '\n')
   # save module blocks
-  for name, content in module_list.items():
-    py_name = path.join(backend_dir, name + '.py')
-    file_describe(py_name, dict(type='external'))
-    with open(py_name, 'wt', encoding='utf8') as yf :
-      yf.write('# Модуль-заглушка. Реализацию придется искать самому\n\n')
+  py_name = path.join(backend_dir, 'z_modules.py')
+  file_describe(py_name, dict(type='external'))
+  with open(py_name, 'wt', encoding='utf8') as yf :
+    yf.write('# -*- coding: utf-8 -*-\n'
+             '# Файл сгенерирован автоматически\n'
+             '# Модуль-заглушка. Реализацию придется искать/писать самому\n\n\n')
+    for name, content in module_list.items():
       for func_name, func_def in content.items():
         yf.write(
-          f"\ndef {func_def['_function']}():\n"
-          f'  """Назначение: {func_def["title"]}"""\n'
-          f"  raise NotImplementedError('Реализуй меня!')\n"
+          f'# Назначение: {func_def["title"]}"""\n'
           )
-      yf.write("\n")
+        yf.write(f"from ..zombiend.{name} import {func_def['_function']} as {func_def['id']}\n\n\n")
   # save file descriptions
   files_desc_save()
   return interface_name

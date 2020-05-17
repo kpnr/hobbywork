@@ -1,11 +1,11 @@
+# -*- coding: utf-8 -*-
 from typing import Mapping, Generator
 
 
 def py_zope_cvt(z_json: Mapping) -> Generator[str, None, None]:
   func_name = z_json['id']
   py_args = [x for x in ((z_json.get('_params', '')).split('\n')) if x]
-  yield 'import datetime'
-  yield ''
+  yield '# -*- coding: utf-8 -*-'
   if not py_args:
     s = f'["{func_name}"]'
   else:
