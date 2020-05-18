@@ -1,0 +1,30 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'\',\'\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center" style="font-size:11px">
+    Нет данных по тележке, вы уверены, что хотите принять ее?
+    <br />
+    <br />
+    <a id="back" href="{{ 'taskAction?uid=%s&emptyconfirm=true&id_site=%s&id_shtask=%s&BARCODENOTEX=%s'%(request.uid, options.get('id_site'), options.get('id_shtask'), options.get('BARCODENOTEX')) }}">
+      Да
+    </a>
+    |
+    <a id="back" href="{{ 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask')) }}">
+      Нет
+    </a>
+  </div>
+{%- endblock -%}
+

@@ -1,0 +1,86 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'tid\',\'tid\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center" style="font-size:11px">
+    <div id="errorblock" class="error" />
+    <script language="javascript">
+      function submit_all(){
+     if (document.getElementById('errorblock').innerHTML != '') 
+	{
+         document.getElementById('finish').href = '#';
+         return false;
+        }
+     document.getElementById('errorblock').innerHTML = 'Дождитесь выполнения операции для продолжения работы'; 
+     }
+    </script>
+    <form action="routeAction">
+      Отсканируйте ШК тележки для завершения
+      <br />
+      <input type="text" name="tid" id="tid" maxlength="127" />
+      <input type="hidden" name="uid" value="{{ request.uid }}" />
+      <input type="hidden" name="id_site" value="{{ options.id_site }}" />
+      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
+      <input type="hidden" name="act" value="scan2" />
+      <input type="hidden" name="id_route" value="{{ options['route_list'][0]['ID_ROUTE'] }}" />
+    </form>
+    <br />
+    <br />
+    {%- if python: options.get('route_list') != None -%}
+      <span style="font-size:14px">
+        Номер маршрута:
+        <span>
+          {{ options['route_list'][0]['ID_ROUTE'] }}
+        </span>
+        <table bgcolor="#ffffff" border="0" cellspacing="1" style="font-size:12px">
+          <tr class="tabcaption">
+            <td width="100">
+              Дата приезда
+            </td>
+            <td width="100">
+              Дата отъезда
+            </td>
+          </tr>
+          {%- for item in python: options['route_list'] -%}
+            <span>
+              <tr bgcolor="#000000" align="center">
+                <td>
+                  {{ item.DATE_IN }}
+                </td>
+                <td>
+                  {{ item.DATE_OUT }}
+                </td>
+              </tr>
+            </span>
+          {%- endfor -%}
+        </table>
+      </span>
+    {%- endif -%}
+    <br />
+    <br />
+    {%- if python: options['route_list'][0]['DATE_OUT'] != None -%}
+      <span>
+        <a id="end" onclick="submit_all();" href="{{ 'routeAction?uid=%s&tid=%s&id_site=%s&act=setdateout&id_shtask=%s&id_route=%s&date_out=%s'%(request.uid, request.tid, options.get('id_site'), options.get('id_shtask'),request.id_route,options['route_list'][0]['DATE_OUT']) }}">
+          Подтвердить отъезд
+        </a>
+        <br />
+      </span>
+    {%- endif -%}
+    <a id="index" href="{{ 'routeAction?uid=%s&id_site=%s&act=start&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask')) }}">
+      Назад
+    </a>
+  </div>
+{%- endblock -%}
+

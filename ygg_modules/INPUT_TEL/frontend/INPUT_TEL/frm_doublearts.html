@@ -1,0 +1,40 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'\',\'barcode\',\'\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center">
+    <b>
+      {{ options.mes }}
+    </b>
+    <br />
+    <div style="width: 240px; word-break: break-all;">
+      {%- for item in options.data -%}
+        <span>
+          <a href="{{ 'gettelegaAction?uid=%s&id=%s&id_shtask=%s&outurl=%s&tcode=%s&tovarid=%s' % (request.uid, item.ID_ART, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tovarid')) }}">
+            <span class="smalltext">
+              {{ item.NAME }}
+            </span>
+          </a>
+          <br />
+        </span>
+      {%- endfor -%}
+    </div>
+    <br />
+    <a id="back" href="{{ 'gettelegaAction?uid=%s&id_shtask=%s&outurl=%s&tcode=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode')) }}">
+      Назад
+    </a>
+  </div>
+{%- endblock -%}
+

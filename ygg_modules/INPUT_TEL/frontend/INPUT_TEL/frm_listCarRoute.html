@@ -1,0 +1,66 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'tid\',\'tid\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center" style="font-size:11px">
+    <div id="errorblock" class="error" />
+    <script language="javascript">
+      function submit_all(){
+     if (document.getElementById('errorblock').innerHTML != '') 
+	{
+         document.getElementById('finish').href = '#';
+         return false;
+        }
+     document.getElementById('errorblock').innerHTML = 'Дождитесь выполнения операции для продолжения работы'; 
+     }
+    </script>
+    Фиксация времени приезда/отъезда авто
+    <br />
+    <br />
+    <form action="routeAction">
+      Отсканируйте ШК тележки
+      <br />
+      <input type="text" name="tid" id="tid" maxlength="127" />
+      <input type="hidden" name="uid" value="{{ request.uid }}" />
+      <input type="hidden" name="id_site" value="{{ options.id_site }}" />
+      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
+      <input type="hidden" name="act" value="scan1" />
+    </form>
+    <br />
+    {%- if python: options.get('route_list') != None and len(options['route_list']) -%}
+      <span>
+        Незавершенные маршруты:
+        <br />
+        {%- for item in python: options['route_list'] -%}
+          <span>
+            <a href="{{ 'routeAction?uid=%s&id_site=%s&id_shtask=%s&id_route=%s&act=select_route' % (request.uid, options.get('id_site'), options.get('id_shtask'), item.ID_ROUTE) }}">
+              {{ item.ID_ROUTE }}
+            </a>
+            <br />
+          </span>
+        {%- endfor -%}
+        <br />
+      </span>
+    {%- endif -%}
+    <a id="back" href="{{ 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask')) }}">
+      Назад
+    </a>
+    <br />
+    <a id="index" href="{{ '../taskListAction?uid=%s&exit=true'%(request.uid) }}">
+      Выход в главное меню
+    </a>
+  </div>
+{%- endblock -%}
+

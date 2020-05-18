@@ -1,0 +1,48 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'tid\',\'tid\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center" style="font-size:11px">
+    {%- if python: options.get('oplist') != None -%}
+      <span>
+        <table bgcolor="#ffffff" border="0" cellspacing="1">
+          <tr class="tabcaption">
+            <td width="100">
+              Контрагент
+            </td>
+            <td width="100">
+              Дата операции
+            </td>
+          </tr>
+          {%- for item in python: options['oplist'] -%}
+            <span>
+              <tr bgcolor="#000000" align="center">
+                <td>
+                  <a href="{{ 'taskAction?uid=%s&id_site=%s&trans_opid=%s&id_shtask=%s&tid=%s&trans_id_shtask=%s' % (request.uid, options.get('id_site'), item.ID_OP, options.get('id_shtask'), options.get('tid'), item.ID_SHTASK) }}">
+                    {{ item.NAMECONTR }}
+                  </a>
+                </td>
+                <td>
+                  {{ item.OPDATE }}
+                </td>
+              </tr>
+            </span>
+          {%- endfor -%}
+        </table>
+      </span>
+    {%- endif -%}
+  </div>
+{%- endblock -%}
+

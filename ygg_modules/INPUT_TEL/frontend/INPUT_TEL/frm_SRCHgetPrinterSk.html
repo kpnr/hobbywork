@@ -1,0 +1,31 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'printersk\',\'printersk\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center" style="font-size:11px">
+    <form action="gettelegaAction">
+      Отсканируйте ШК принтера:
+      <br />
+      <input type="text" name="printersk" id="printersk" maxlength="40" />
+      <input type="hidden" name="act" value="prn_printersk" />
+      <input type="hidden" name="uid" value="{{ request.uid }}" />
+      <input type="hidden" name="outurl" value="{{ request.outurl }}" />
+      <input type="hidden" name="tcode" value="{{ options.tcode }}" />
+      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
+      <input type="hidden" name="id_cart" value="{{ options.id_cart }}" />
+    </form>
+  </div>
+{%- endblock -%}
+

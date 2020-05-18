@@ -1,0 +1,134 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'\',\'\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center" style="font-size:11px">
+    <b>
+      Тележка №:
+      <span>
+        {{ options.tnumber }}
+      </span>
+    </b>
+    <br />
+    <br />
+    <a id="back" href="{{ 'gettelegaAction?act=wantprint&uid=%s&id_shtask=%s&outurl=%s&tcode=%s&id_cart=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tid')) }}">
+      Распечатать ШК
+    </a>
+    <br />
+    {%- if python: options.get('t_ok') != None -%}
+      <span>
+        Совпадения:
+        <br />
+        <table bgcolor="#ffffff" border="0" cellspacing="1" style="width: 240px !important;">
+          <tr class="tabcaption">
+            <td>
+              Товар
+            </td>
+            <td align="center">
+              Ост
+            </td>
+          </tr>
+          {%- for item in python: options['t_ok'] -%}
+            <span>
+              <tr bgcolor="#000000">
+                <td>
+                  <div style="width: 180px; word-break: break-all !important;">
+                    <a href="#">
+                      {{ item.ARTNAME }}
+                    </a>
+                  </div>
+                </td>
+                <td align="center">
+                  {{ item.ARTREST }}
+                </td>
+              </tr>
+            </span>
+          {%- endfor -%}
+        </table>
+      </span>
+    {%- endif -%}
+    {%- if python: options.get('t_diff') != None -%}
+      <span>
+        Различия:
+        <br />
+        <table bgcolor="#ffffff" border="0" cellspacing="1">
+          <tr class="tabcaption">
+            <td>
+              Товар
+            </td>
+            <td align="center">
+              Ост
+            </td>
+          </tr>
+          {%- for item in python: options['t_diff'] -%}
+            <span>
+              <tr bgcolor="#000000">
+                <td>
+                  <a href="#">
+                    {{ item.ARTNAME }}
+                  </a>
+                </td>
+                <td align="center">
+                  {{ item.ARTREST }}
+                </td>
+              </tr>
+            </span>
+          {%- endfor -%}
+        </table>
+      </span>
+    {%- endif -%}
+    {%- if python: options.get('t_notscaned') != None -%}
+      <span>
+        Не отсканировано с тележки:
+        <br />
+        <table bgcolor="#ffffff" border="0" cellspacing="1">
+          <tr class="tabcaption">
+            <td>
+              Товар
+            </td>
+            <td align="center">
+              Ост
+            </td>
+          </tr>
+          {%- for item in python: options['t_notscaned'] -%}
+            <span>
+              <tr bgcolor="#000000">
+                <td>
+                  <a href="#">
+                    {{ item.ARTNAME }}
+                  </a>
+                </td>
+                <td align="center">
+                  {{ item.ARTREST }}
+                </td>
+              </tr>
+            </span>
+          {%- endfor -%}
+        </table>
+      </span>
+    {%- endif -%}
+    <br />
+    <a id="back" href="{{ 'gettelegaAction?act=wantprint&uid=%s&id_shtask=%s&outurl=%s&tcode=%s&id_cart=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tid')) }}">
+      Распечатать ШК
+    </a>
+    <br />
+    <br />
+    <br />
+    <a id="back" href="{{ 'gettelegaAction?uid=%s&id_shtask=%s&outurl=%s&tcode=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode')) }}">
+      Назад
+    </a>
+  </div>
+{%- endblock -%}
+

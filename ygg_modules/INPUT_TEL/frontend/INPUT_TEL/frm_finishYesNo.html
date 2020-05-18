@@ -1,0 +1,30 @@
+{%- extends "zope/main_template.html" -%}
+{%- block script -%}
+  <script>
+    {{ 'function init(){OnBodyLoad(\'\',\'\');}' }}
+  </script>
+{%- endblock -%}
+
+{%- block error -%}
+  {%- if request.err or options.err or nothing -%}
+    <div align="justify" class="error">
+      {{ request.err or options.err }}
+    </div>
+  {%- endif -%}
+{%- endblock -%}
+
+{%- block data -%}
+  <div align="center" style="font-size:11px">
+    Проверьте, пожалуйста, все ли тележки отражены в документе. Завершить приемку?
+    <br />
+    <br />
+    <a id="back" onclick="lockPage();" href="{{ 'taskAction?uid=%s&endflagok=true&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask')) }}">
+      Да
+    </a>
+    |
+    <a id="back" href="{{ 'taskAction?uid=%s&id_site=%s&id_shtask=%s'%(request.uid, options.get('id_site'), options.get('id_shtask')) }}">
+      Нет
+    </a>
+  </div>
+{%- endblock -%}
+
