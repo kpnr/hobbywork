@@ -181,19 +181,24 @@ def parseZobj(objs):
             json.dump(item['node'], fh, ensure_ascii=False, indent=4, default=jdefault)
 
         if item['meta_type'][0:6] != 'Folder':
-            with open(full_path, 'wb') as fh:
                 if item['meta_type'] == 'File':
-                    fh.write(item['node']['data'].oid if hasattr(item['node']['data'], 'oid') else item['node']['data'])
+                    out = item['node']['data'].oid if hasattr(item['node']['data'], 'oid') else item['node']['data']
+                    file_ext = ''
                 elif item['meta_type'] == 'Script (Python)':
-                    fh.write(item['node']['_body'])
+                    out = item['node']['_body']
+                    file_ext = '.py'
                 elif item['meta_type'] == 'Page Template':
-                    fh.write(item['node']['_text'])
+                    out = item['node']['_text']
+                    file_ext = '.html'
                 elif item['meta_type'] == 'Z SQL Method':
-                    fh.write(item['node']['src'])
+                    out = item['node']['src']
+                    file_ext = '.sql'
                 else:
                     node = item['node']
                     out = node.get('data', '') or node.get('_body', '') or node.get('_text', '')\
                            or node.get('src', '') or 'WTF?'
+                    file_ext = ''
+                with open(full_path + file_ext, 'wb') as fh :
                     fh.write(out)
     return
 
