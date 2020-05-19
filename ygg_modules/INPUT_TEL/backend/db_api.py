@@ -2,14 +2,14 @@
 # Этот файл сгенерирован автоматически.
 
 
-def CHECK_TELEGA_DATE(task_id: int):
+def CHECK_TELEGA_DATE(TASK_ID: int):
   """
 Проверка даты операции тележки
   Output fields:
-    is_old: int
-    opdate: datetime
+    IS_OLD: int
+    OPDATE: datetime
   """
-  rv = fetch_all("select 1 as is_old, op.opdate from sh_task tk left join operation op on op.ID_OP = tk.id_op where id_shtask = ? and op.opdate > current_timestamp - 30 ", task_id)
+  rv = fetch_all("select 1 as is_old, op.opdate from sh_task tk left join operation op on op.ID_OP = tk.id_op where id_shtask = ? and op.opdate > current_timestamp - 30 ", TASK_ID)
   return rv
 
 
@@ -17,291 +17,291 @@ def getName(id_empl: str):
   """
 
   Output fields:
-    name: str
+    NAME: str
   """
-  rv = fetch_all("select NAME from SH_GETNAME(?)", id_empl)
+  rv = fetch_all("select NAME from SH_GETNAME(?)", ID_EMPL)
   return rv
 
 
-def GET_CART_OPNUMBER(cart_id: str):
+def GET_CART_OPNUMBER(CART_ID: str):
   """
 Получение номера операции по ID тележки
   Output fields:
-    number: str
+    NUMBER: str
   """
-  rv = fetch_all("SELECT OP.NUMBER FROM SH_TASK TK JOIN OPERATION OP ON OP.ID_OP = TK.ID_OP JOIN TRANSPORT_CART TC ON TC.ID_CART=TK.ID_CART WHERE TC.NUM_CART= ? ", cart_id)
+  rv = fetch_all("SELECT OP.NUMBER FROM SH_TASK TK JOIN OPERATION OP ON OP.ID_OP = TK.ID_OP JOIN TRANSPORT_CART TC ON TC.ID_CART=TK.ID_CART WHERE TC.NUM_CART= ? ", CART_ID)
   return rv
 
 
-def GET_SITE_BARCODE(site_id: int):
+def GET_SITE_BARCODE(SITE_ID: int):
   """
 Проверка даты операции тележки
   Output fields:
-    barcode: str
+    BARCODE: str
   """
-  rv = fetch_all("SELECT BARCODE FROM SITE WHERE ID_SITE = ? ", site_id)
+  rv = fetch_all("SELECT BARCODE FROM SITE WHERE ID_SITE = ? ", SITE_ID)
   return rv
 
 
-def GM_CARTINCOME_ADD(id_empl: int, barcode: str):
+def GM_CARTINCOME_ADD(ID_EMPL: int, BARCODE: str):
   """
 
   Output fields:
-    id_shtask: int
-    mes: str
+    ID_SHTASK: int
+    MES: str
   """
-  rv = fetch_all("select * from GM_CARTINCOME_ADD( ?, ? )", id_empl, barcode)
+  rv = fetch_all("select * from GM_CARTINCOME_ADD( ?, ? )", ID_EMPL, BARCODE)
   return rv
 
 
-def GM_CARTINCOME_ADD_TRANZ(id_empl: int, barcode: str, id_op: int=None):
+def GM_CARTINCOME_ADD_TRANZ(ID_EMPL: int, BARCODE: str, ID_OP: int=None):
   """
 
   Output fields:
-    mes: str
+    MES: str
   """
-  rv = fetch_all("select * from GM_CARTINCOME_ADD_TRANZ( ?, ?, ? )", id_empl, barcode, id_op)
+  rv = fetch_all("select * from GM_CARTINCOME_ADD_TRANZ( ?, ?, ? )", ID_EMPL, BARCODE, ID_OP)
   return rv
 
 
-def GM_CARTINCOME_BEGIN(id_empl: int):
+def GM_CARTINCOME_BEGIN(ID_EMPL: int):
   """
 
   Output fields:
-    id_shtask: int
+    ID_SHTASK: int
   """
-  rv = fetch_all("select * from GM_CARTINCOME_BEGIN( ? )", id_empl)
+  rv = fetch_all("select * from GM_CARTINCOME_BEGIN( ? )", ID_EMPL)
   return rv
 
 
-def GM_CARTINCOME_CREATE(id_empl: int, barcodeex: str, barcode: str):
-  """
-
-  Output fields:
-    
-  """
-  rv = fetch_all("select * from GM_CARTINCOME_CREATE( ?, ?, ? )", id_empl, barcodeex, barcode)
-  return rv
-
-
-def GM_CARTINCOME_END(id_shtask: int, barcodesite: int):
-  """
-
-  Output fields:
-    mes: str
-  """
-  rv = fetch_all("select * from GM_CARTINCOME_END( ?, ? )", id_shtask, barcodesite)
-  return rv
-
-
-def GM_CARTINCOME_GETOPLISTFORTRANZ(vopnumber: str, vnumtask: int):
+def GM_CARTINCOME_CREATE(ID_EMPL: int, BARCODEEX: str, BARCODE: str):
   """
 
   Output fields:
     
   """
-  rv = fetch_all("select * from GM_CARTINCOME_GETOPLISTFORTRANZ( ?, ? )", vopnumber, vnumtask)
+  rv = fetch_all("select * from GM_CARTINCOME_CREATE( ?, ?, ? )", ID_EMPL, BARCODEEX, BARCODE)
   return rv
 
 
-def GM_CARTINCOME_GETTASKINFO(barcode: str):
+def GM_CARTINCOME_END(ID_SHTASK: int, BARCODESITE: int):
   """
 
   Output fields:
-    tasktype: str
-    opnumber: str
-    num: int
-    mes: str
+    MES: str
   """
-  rv = fetch_all("select * from GM_CARTINCOME_GETTASKINFO( ? )", barcode)
+  rv = fetch_all("select * from GM_CARTINCOME_END( ?, ? )", ID_SHTASK, BARCODESITE)
   return rv
 
 
-def GM_CARTINCOME_LISTCART(id_op: int, id_empl: int):
+def GM_CARTINCOME_GETOPLISTFORTRANZ(VOPNUMBER: str, VNUMTASK: int):
   """
 
   Output fields:
-    id_shtask: int
+    
   """
-  rv = fetch_all("select * from GM_CARTINCOME_LISTCART( ?, ? )", id_op, id_empl)
+  rv = fetch_all("select * from GM_CARTINCOME_GETOPLISTFORTRANZ( ?, ? )", VOPNUMBER, VNUMTASK)
   return rv
 
 
-def GM_CARTINCOME_LISTOP(id_empl: int):
+def GM_CARTINCOME_GETTASKINFO(BARCODE: str):
   """
 
   Output fields:
-    id_op: int
-    opnumber: str
-    counttel: int
+    TASKTYPE: str
+    OPNUMBER: str
+    NUM: int
+    MES: str
   """
-  rv = fetch_all("select * from GM_CARTINCOME_LISTOP( ? )", id_empl)
+  rv = fetch_all("select * from GM_CARTINCOME_GETTASKINFO( ? )", BARCODE)
   return rv
 
 
-def GM_CARTINCOME_LIST_ROUTES(id_route_in: int, date_out_cur: str, check_not_end_route: str, reserved1: int=None, reserved2: int=None, reserved3: int=None):
+def GM_CARTINCOME_LISTCART(ID_OP: int, ID_EMPL: int):
+  """
+
+  Output fields:
+    ID_SHTASK: int
+  """
+  rv = fetch_all("select * from GM_CARTINCOME_LISTCART( ?, ? )", ID_OP, ID_EMPL)
+  return rv
+
+
+def GM_CARTINCOME_LISTOP(ID_EMPL: int):
+  """
+
+  Output fields:
+    ID_OP: int
+    OPNUMBER: str
+    COUNTTEL: int
+  """
+  rv = fetch_all("select * from GM_CARTINCOME_LISTOP( ? )", ID_EMPL)
+  return rv
+
+
+def GM_CARTINCOME_LIST_ROUTES(ID_ROUTE_IN: int, DATE_OUT_CUR: str, CHECK_NOT_END_ROUTE: str, RESERVED1: int=None, RESERVED2: int=None, RESERVED3: int=None):
   """
 Получение списка маршрутов
   Output fields:
-    id_shtask: int
-    number: int
-    counts: int
-    countns: int
+    ID_SHTASK: int
+    NUMBER: int
+    COUNTS: int
+    COUNTNS: int
   """
-  rv = fetch_all("select * from GM_CARTINCOME_LIST_ROUTES( ?, ?, ?, ?, ?, ? )", id_route_in, date_out_cur, check_not_end_route, reserved1, reserved2, reserved3)
+  rv = fetch_all("select * from GM_CARTINCOME_LIST_ROUTES( ?, ?, ?, ?, ?, ? )", ID_ROUTE_IN, DATE_OUT_CUR, CHECK_NOT_END_ROUTE, RESERVED1, RESERVED2, RESERVED3)
   return rv
 
 
-def GM_CARTINCOME_PRINT(id_empl: int, printerbarcode: str):
+def GM_CARTINCOME_PRINT(ID_EMPL: int, PRINTERBARCODE: str):
   """
 
   Output fields:
     
   """
-  rv = fetch_all("select * from GM_CARTINCOME_PRINT( ?, ? )", id_empl, printerbarcode)
+  rv = fetch_all("select * from GM_CARTINCOME_PRINT( ?, ? )", ID_EMPL, PRINTERBARCODE)
   return rv
 
 
-def GM_CARTINCOME_ROUTES(barcode: str, check_type: str, id_route_in: int, date_out: str, reserved1: int=None, reserved2: int=None, reserved3: int=None):
+def GM_CARTINCOME_ROUTES(BARCODE: str, CHECK_TYPE: str, ID_ROUTE_IN: int, DATE_OUT: str, RESERVED1: int=None, RESERVED2: int=None, RESERVED3: int=None):
   """
 Получение информации о маршруте
   Output fields:
-    id_shtask: int
-    number: int
-    counts: int
-    countns: int
+    ID_SHTASK: int
+    NUMBER: int
+    COUNTS: int
+    COUNTNS: int
   """
-  rv = fetch_all("select * from GM_CARTINCOME_ROUTES( ?, ?, ?, ?, ?, ?, ? )", barcode, check_type, id_route_in, date_out, reserved1, reserved2, reserved3)
+  rv = fetch_all("select * from GM_CARTINCOME_ROUTES( ?, ?, ?, ?, ?, ?, ? )", BARCODE, CHECK_TYPE, ID_ROUTE_IN, DATE_OUT, RESERVED1, RESERVED2, RESERVED3)
   return rv
 
 
-def GM_CARTPUT_FINDART(barcode: str=None, id_shtask: int=None):
+def GM_CARTPUT_FINDART(BARCODE: str=None, ID_SHTASK: int=None):
   """
 GM_CARTPUT_FINDART
   Output fields:
     
   """
-  rv = fetch_all("select * from GM_GET_BARCODE_TASK( ?, ? )", barcode, id_shtask)
+  rv = fetch_all("select * from GM_GET_BARCODE_TASK( ?, ? )", BARCODE, ID_SHTASK)
   return rv
 
 
-def GM_GETPALLET_ADDART(id_shtask: int, id_art: int):
+def GM_GETPALLET_ADDART(ID_SHTASK: int, ID_ART: int):
   """
 
   Output fields:
-    countart: int
+    COUNTART: int
   """
-  rv = fetch_all("select * from GM_GETPALLET_ADDART ( ?, ? )", id_shtask, id_art)
+  rv = fetch_all("select * from GM_GETPALLET_ADDART ( ?, ? )", ID_SHTASK, ID_ART)
   return rv
 
 
-def GM_GETPALLET_CARTS(id_shtaskp: int, sttcode: str):
+def GM_GETPALLET_CARTS(ID_SHTASKP: int, STTCODE: str):
   """
 
   Output fields:
-    id_shtask: int
-    number: int
-    counts: int
-    countns: int
+    ID_SHTASK: int
+    NUMBER: int
+    COUNTS: int
+    COUNTNS: int
   """
-  rv = fetch_all("select * from GM_GETPALLET_CARTS( ?, ? )", id_shtaskp, sttcode)
+  rv = fetch_all("select * from GM_GETPALLET_CARTS( ?, ? )", ID_SHTASKP, STTCODE)
   return rv
 
 
-def GM_GETPALLET_CART_ARTS(id_shtaskp: int, id_shtaskt: int, mode: int):
+def GM_GETPALLET_CART_ARTS(ID_SHTASKP: int, ID_SHTASKT: int, MODE: int):
   """
 
   Output fields:
-    artname: str
-    artrest: int
+    ARTNAME: str
+    ARTREST: int
   """
-  rv = fetch_all("select * from GM_GETPALLET_CART_ARTS( ?, ?, ? )", id_shtaskp, id_shtaskt, mode)
+  rv = fetch_all("select * from GM_GETPALLET_CART_ARTS( ?, ?, ? )", ID_SHTASKP, ID_SHTASKT, MODE)
   return rv
 
 
-def GM_GETPALLET_CHKBARCODE(barcode: str=None, id_empl: int=None, id_shtask: int=None, id_pallet: int=None):
+def GM_GETPALLET_CHKBARCODE(BARCODE: str=None, ID_EMPL: int=None, ID_SHTASK: int=None, ID_PALLET: int=None):
   """
 
   Output fields:
     
   """
-  rv = fetch_all("select * from GM_GETPALLET_CHKBARCODE( ?, ?, ?, ? )", barcode, id_empl, id_shtask, id_pallet)
+  rv = fetch_all("select * from GM_GETPALLET_CHKBARCODE( ?, ?, ?, ? )", BARCODE, ID_EMPL, ID_SHTASK, ID_PALLET)
   return rv
 
 
-def GM_GETPALLET_FINISHTASK(id_shtask: int):
+def GM_GETPALLET_FINISHTASK(ID_SHTASK: int):
   """
 
   Output fields:
-    success: str
-    mes: str
+    SUCCESS: str
+    MES: str
   """
-  rv = fetch_all("select * from GM_GETPALLET_FINISHTASK( ? )", id_shtask)
+  rv = fetch_all("select * from GM_GETPALLET_FINISHTASK( ? )", ID_SHTASK)
   return rv
 
 
-def GM_GETPALLET_PRINTCART(id_shtask: int, id_empl: int, printerbarcode: str=None, labelbarcode: str=None):
+def GM_GETPALLET_PRINTCART(ID_SHTASK: int, ID_EMPL: int, PRINTERBARCODE: str=None, LABELBARCODE: str=None):
   """
 
   Output fields:
-    ret: int
-    mes: str
+    RET: int
+    MES: str
   """
-  rv = fetch_all("select * from GM_GETPALLET_PRINTCART( ?, ?, ?, ? )", id_shtask, id_empl, printerbarcode, labelbarcode)
+  rv = fetch_all("select * from GM_GETPALLET_PRINTCART( ?, ?, ?, ? )", ID_SHTASK, ID_EMPL, PRINTERBARCODE, LABELBARCODE)
   return rv
 
 
-def GM_GETPALLET_STARTTASK(id_empl: int):
+def GM_GETPALLET_STARTTASK(ID_EMPL: int):
   """
 
   Output fields:
-    id_shtask: int
+    ID_SHTASK: int
   """
-  rv = fetch_all("select * from GM_GETPALLET_STARTTASK ( ? ) ", id_empl)
+  rv = fetch_all("select * from GM_GETPALLET_STARTTASK ( ? ) ", ID_EMPL)
   return rv
 
 
-def GM_GETSITE(id_site: int=None, barcode: str=None):
+def GM_GETSITE(ID_SITE: int=None, BARCODE: str=None):
   """
 
   Output fields:
-    id_site: int
-    id_sitetype: int
-    id_sitetypetype: int
-    codetype: str
-    codetypetype: str
-    name: str
-    fullname: str
-    nametype: str
-    nametypetype: str
+    ID_SITE: int
+    ID_SITETYPE: int
+    ID_SITETYPETYPE: int
+    CODETYPE: str
+    CODETYPETYPE: str
+    NAME: str
+    FULLNAME: str
+    NAMETYPE: str
+    NAMETYPETYPE: str
   """
-  rv = fetch_all("select * from GM_GETSITE( ?, ? )", id_site, barcode)
+  rv = fetch_all("select * from GM_GETSITE( ?, ? )", ID_SITE, BARCODE)
   return rv
 
 
-def GM_GET_ARTS_BARCODE(barcode: str):
+def GM_GET_ARTS_BARCODE(BARCODE: str):
   """
 
   Output fields:
-    id_art: int
-    name: str
+    ID_ART: int
+    NAME: str
   """
-  rv = fetch_all("select ID_ART, NAME from GM_GET_ARTS_BARCODE( ? ) group by ID_ART, NAME", barcode)
+  rv = fetch_all("select ID_ART, NAME from GM_GET_ARTS_BARCODE( ? ) group by ID_ART, NAME", BARCODE)
   return rv
 
 
-def GM_GET_BARCODE_TASK(barcode: str=None, id_shtask: int=None):
+def GM_GET_BARCODE_TASK(BARCODE: str=None, ID_SHTASK: int=None):
   """
 
   Output fields:
-    id_art: int
-    id_sharttask: int
-    name: str
-    quantity: int
-    workquantity: int
-    bcquantity: int
+    ID_ART: int
+    ID_SHARTTASK: int
+    NAME: str
+    QUANTITY: int
+    WORKQUANTITY: int
+    BCQUANTITY: int
   """
-  rv = fetch_all("select * from GM_GET_BARCODE_TASK( ?, ? )", barcode, id_shtask)
+  rv = fetch_all("select * from GM_GET_BARCODE_TASK( ?, ? )", BARCODE, ID_SHTASK)
   return rv
 
 
@@ -309,29 +309,29 @@ def NEW_GUID():
   """
 
   Output fields:
-    guid: str
+    GUID: str
   """
   rv = fetch_all("select rupper(createguid()) GUID from sh_config", )
   return rv
 
 
-def SH_JOINSITE(id_shtask: int, barcode: str):
+def SH_JOINSITE(ID_SHTASK: int, BARCODE: str):
   """
 
   Output fields:
     
   """
-  rv = fetch_all("select * from SH_JOINSITE( ?, ? )", id_shtask, barcode)
+  rv = fetch_all("select * from SH_JOINSITE( ?, ? )", ID_SHTASK, BARCODE)
   return rv
 
 
-def SQL_TERMCONNECTION(id_empl: int):
+def SQL_TERMCONNECTION(ID_EMPL: int):
   """
 
   Output fields:
-    id_shtermcon: int
+    ID_SHTERMCON: int
   """
-  rv = fetch_all("select max(ID_SHTERMCON) AS ID_SHTERMCON from SH_TERMCONNECTION where DISCONNECTTIME is null and ID_EMPL=?", id_empl)
+  rv = fetch_all("select max(ID_SHTERMCON) AS ID_SHTERMCON from SH_TERMCONNECTION where DISCONNECTTIME is null and ID_EMPL=?", ID_EMPL)
   return rv
 
 

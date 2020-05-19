@@ -1,7 +1,7 @@
 from typing import Sequence, Mapping, Any
 from box import Box
 import abc
-from collections import ChainMap
+from collections import ChainMap, defaultdict
 from flask import request as f_request, render_template
 
 class PyModule(abc.ABC):
@@ -55,6 +55,16 @@ class ChainBox(ChainMap):
     del self[item]
 
 
+class ChainBox2(ChainBox):
+  def has_key(self, key):
+    rv = key in self
+    return rv
+
+  def iteritems(self):
+    rv = self.items()
+    return rv
+
+
 class dict2(dict):
   def has_key(self, key):
     rv = key in self
@@ -66,7 +76,7 @@ class dict2(dict):
 
 
 def z_request_get(y_module) -> Box:
-  rv = ChainBox(
+  rv = ChainBox2(
     Box(),
     Box(
       RESPONSE=None,
@@ -75,7 +85,9 @@ def z_request_get(y_module) -> Box:
     f_request.values,
     dict(
       uid=y_module.user.uid,
+      headers=f_request.headers,  # TODO: restructure or remove base_layout
       ),
+    defaultdict(lambda : '')
     )
   return rv
 
@@ -84,4 +96,5 @@ z_builtins = dict(
   globals=globals,
   locals=locals,
   dict=dict2,
+  len=len,
   )

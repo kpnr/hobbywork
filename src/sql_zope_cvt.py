@@ -57,7 +57,7 @@ class SqlZopeDef(object):
     for var_match in cls.RE_INPUT_VAR.finditer(z_def):
       rv.append(
         SqlArgDef(
-          id=var_match.group('id').casefold(),
+          id=var_match.group('id'),
           type=cls.STR_TO_TYPE[var_match.group('type')],
           optional=bool(var_match.group('optional'))
           )
@@ -71,7 +71,7 @@ class SqlZopeDef(object):
     for z_arg in z_def:
       rv.append(
         SqlArgDef(
-          id=z_arg['name'].casefold(),
+          id=z_arg['name'],
           type=cls.STR_TO_TYPE[z_arg['type']],
           optional=False
           )
@@ -98,7 +98,7 @@ class SqlZopeDef(object):
     rv += '\n  """\n'
     sql, param_list = SQLParser.named_to_pos_parse(self.source)
     sql = sql.replace('"', r'\"')
-    param_list = (p.casefold() for p in param_list)
+    param_list = (p for p in param_list)
     rv += f'  rv = fetch_all("{sql}", {", ".join(param_list)})\n'
     rv += '  return rv\n\n'
     return rv

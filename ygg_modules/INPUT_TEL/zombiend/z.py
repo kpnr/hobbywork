@@ -1,11 +1,12 @@
-from collections import ChainMap
+from collections import defaultdict
 from functools import wraps
 from itertools import chain
 from typing import Iterable, List, Sequence, Callable, Dict, Tuple, Any, NewType
 import abc
 from os import listdir, path
 from importlib import import_module
-from .corpse import Box, ChainBox, z_builtins, PyModule, z_request_get, render_template
+from .corpse import (Box, ChainBox2, dict2, z_builtins, PyModule, z_request_get, render_template,\
+                     IBox)
 from appserver.yggdrasil_branch import YggdrasilBranch
 from .. import backend
 
@@ -50,6 +51,7 @@ class Module(YggdrasilBranch):
     z_scripts = self.scripts_public_find(z_scripts)
     z_templates = self.templates_find()
     self.z_objects = Box(chain(z_scripts, z_templates), box_duplicates='error')
+    backend.db_api.fetch_all = self.fetch_all
     return
 
   @staticmethod
@@ -82,9 +84,19 @@ class Module(YggdrasilBranch):
     return rv
 
   def import_template(self, template_name: str) -> TemplateFunc:
+    z_here = dict2(
+      getUserName=lambda uid: self.user.shortname,
+      title='Title not implemented yet',
+      )
     template_name = self.name+'/'+template_name+'.html'
     def render_func(**kwargs) -> str:
-      rv = render_template(template_name, request=z_request_get(self), **kwargs)
+      rv = render_template(
+        template_name,
+        request=kwargs.pop('request', z_request_get(self)),
+        container=kwargs.pop('container', self.z_container_get()),
+        here=kwargs.pop('here', z_here),
+        options=defaultdict(lambda : '', kwargs)
+        )
       return rv
     return render_func
 
@@ -132,16 +144,24 @@ class Module(YggdrasilBranch):
       l = self.z_locals_get(code_obj)
       g.update(l)
       # noinspection PyTypeChecker
-      rv = eval(code_obj, g, dict(var1=1, var2=2))
+      rv = eval(code_obj, g)
       return rv
 
     # noinspection PyUnresolvedReferences
     code_obj: CodeObject = z_func.__code__
     return _z_wrapper
 
-  def z_globals_get(self) -> Dict[str, Any]:
+  def z_container_get(self):
+    def z_isInteger(v):
+      rv = isinstance(v, int)
+      return rv
+
     z_req = z_request_get(self)
-    container = ChainBox(self.z_objects, Box(REQUEST=z_req))
+    container = ChainBox2(self.z_objects, Box(REQUEST=z_req, isInteger=z_isInteger))
+    return container
+
+  def z_globals_get(self) -> Dict[str, Any]:
+    container = self.z_container_get()
     rv = dict(
       __builtins__=z_builtins,
       container=container,
@@ -150,7 +170,17 @@ class Module(YggdrasilBranch):
     return rv
 
   def z_locals_get(self, code_obj: CodeObject) -> Dict[str, Any]:
-    rv = dict()
+    rv = dict(
+      )
     return rv
+
+  def fetch_all(self, sql, *args):
+    with self.database.acquire(True) as tr :
+      rows = tr.execute(sql, args, tr.ALL)
+    rv = []
+    for row in rows:
+      rv.append(IBox(row))
+    return rv
+
 
 z: Module = Module(import_name=__name__)
