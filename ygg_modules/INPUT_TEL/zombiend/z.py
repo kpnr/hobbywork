@@ -96,7 +96,9 @@ class Module(YggdrasilBranch):
         request=kwargs.pop('request', z_request_get(self)),
         container=kwargs.pop('container', self.z_container_get()),
         here=kwargs.pop('here', z_here),
-        options=defaultdict(lambda : '', kwargs)
+        len=kwargs.pop('len', z_builtins['len']),
+        options=defaultdict(lambda : '', kwargs),
+        **{'None': None},
         )
       return rv
     return render_func

@@ -39,11 +39,11 @@
       <input type="hidden" name="act" value="scan1" />
     </form>
     <br />
-    {%- if python: options.get('route_list') != None and len(options['route_list']) -%}
+    {%- if options.get('route_list') != None and len(options['route_list']) -%}
       <span>
         Незавершенные маршруты:
         <br />
-        {%- for item in python: options['route_list'] -%}
+        {%- for item in options['route_list'] -%}
           <span>
             <a href="{{ 'routeAction?uid=%s&id_site=%s&id_shtask=%s&id_route=%s&act=select_route' % (request.uid, options.get('id_site'), options.get('id_shtask'), item.ID_ROUTE) }}">
               {{ item.ID_ROUTE }}

@@ -24,7 +24,7 @@
     Принятые тележки:
     <br />
     <br />
-    {%- if python: options.get('cartlist') != None -%}
+    {%- if options.get('cartlist') != None -%}
       <span>
         <table bgcolor="#ffffff" border="0" cellspacing="1">
           <tr class="tabcaption">
@@ -32,11 +32,11 @@
               Номер
             </td>
           </tr>
-          {%- for item in python: options['cartlist'] -%}
+          {%- for item in options['cartlist'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>
-                  {%- if python: item.ISTRANZ == 1 -%}
+                  {%- if item.ISTRANZ == 1 -%}
                     <span>
                       Тележка
                     </span>

@@ -31,11 +31,11 @@
       <br />
       <input type="text" name="tid" id="tid" maxlength="127" />
       <input type="hidden" name="uid" value="{{ request.uid }}" />
-      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
       <input type="hidden" name="id_site" value="{{ options.id_site }}" />
+      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
     </form>
     <br />
-    {%- if python: options.get('oplist') != None -%}
+    {%- if options.get('oplist') != None -%}
       <span>
         <table bgcolor="#ffffff" border="0" cellspacing="1">
           <tr class="tabcaption">
@@ -46,7 +46,7 @@
               Тележек
             </td>
           </tr>
-          {%- for item in python: options['oplist'] -%}
+          {%- for item in options['oplist'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>

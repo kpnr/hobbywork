@@ -38,7 +38,7 @@
     </form>
     <br />
     <br />
-    {%- if python: options.get('route_list') != None -%}
+    {%- if options.get('route_list') != None -%}
       <span style="font-size:14px">
         Номер маршрута:
         <span>
@@ -53,7 +53,7 @@
               Дата отъезда
             </td>
           </tr>
-          {%- for item in python: options['route_list'] -%}
+          {%- for item in options['route_list'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>
@@ -70,7 +70,7 @@
     {%- endif -%}
     <br />
     <br />
-    {%- if python: options['route_list'][0]['DATE_OUT'] != None -%}
+    {%- if options['route_list'][0]['DATE_OUT'] != None -%}
       <span>
         <a id="end" onclick="submit_all();" href="{{ 'routeAction?uid=%s&tid=%s&id_site=%s&act=setdateout&id_shtask=%s&id_route=%s&date_out=%s'%(request.uid, request.tid, options.get('id_site'), options.get('id_shtask'),request.id_route,options['route_list'][0]['DATE_OUT']) }}">
           Подтвердить отъезд

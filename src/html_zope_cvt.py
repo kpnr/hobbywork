@@ -96,8 +96,13 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       return s
 
     def tal_expression_cvt(s: str) -> str:
-      s = s.replace('/', '.')
-      s = s.replace('|', ' or ')
+      if s.startswith('python:'):
+        s = s[len('python:'):]
+        s = s.strip()
+      else:
+        # it seems "path:" expression
+        s = s.replace('/', '.')
+        s = s.replace('|', ' or ')
       return s
 
     nonlocal output_enabled

@@ -28,7 +28,7 @@
       <input type="hidden" name="tcode" value="{{ options.tcode }}" />
       <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
     </form>
-    {%- if python: options.get('currenttovar') is not None  -%}
+    {%- if options.get('currenttovar') is not None -%}
       <span>
         <br />
         Отсканировано товаров:
@@ -47,7 +47,7 @@
         <br />
       </span>
     {%- endif -%}
-    {%- if python: options.get('alltovar') is not None -%}
+    {%- if options.get('alltovar') is not None -%}
       <span>
         Список вероятных номеров тележек:
         <br />
@@ -63,7 +63,7 @@
               Не совпало
             </td>
           </tr>
-          {%- for item in python: options['alltovar'] -%}
+          {%- for item in options['alltovar'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>

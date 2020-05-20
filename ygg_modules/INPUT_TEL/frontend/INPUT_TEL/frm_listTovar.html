@@ -27,7 +27,7 @@
       Распечатать ШК
     </a>
     <br />
-    {%- if python: options.get('t_ok') != None -%}
+    {%- if options.get('t_ok') != None -%}
       <span>
         Совпадения:
         <br />
@@ -40,7 +40,7 @@
               Ост
             </td>
           </tr>
-          {%- for item in python: options['t_ok'] -%}
+          {%- for item in options['t_ok'] -%}
             <span>
               <tr bgcolor="#000000">
                 <td>
@@ -59,7 +59,7 @@
         </table>
       </span>
     {%- endif -%}
-    {%- if python: options.get('t_diff') != None -%}
+    {%- if options.get('t_diff') != None -%}
       <span>
         Различия:
         <br />
@@ -72,7 +72,7 @@
               Ост
             </td>
           </tr>
-          {%- for item in python: options['t_diff'] -%}
+          {%- for item in options['t_diff'] -%}
             <span>
               <tr bgcolor="#000000">
                 <td>
@@ -89,7 +89,7 @@
         </table>
       </span>
     {%- endif -%}
-    {%- if python: options.get('t_notscaned') != None -%}
+    {%- if options.get('t_notscaned') != None -%}
       <span>
         Не отсканировано с тележки:
         <br />
@@ -102,7 +102,7 @@
               Ост
             </td>
           </tr>
-          {%- for item in python: options['t_notscaned'] -%}
+          {%- for item in options['t_notscaned'] -%}
             <span>
               <tr bgcolor="#000000">
                 <td>

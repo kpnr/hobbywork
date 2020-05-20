@@ -15,7 +15,7 @@
 
 {%- block data -%}
   <div align="center" style="font-size:11px">
-    {%- if python: options.get('oplist') != None -%}
+    {%- if options.get('oplist') != None -%}
       <span>
         <table bgcolor="#ffffff" border="0" cellspacing="1">
           <tr class="tabcaption">
@@ -26,7 +26,7 @@
               Дата операции
             </td>
           </tr>
-          {%- for item in python: options['oplist'] -%}
+          {%- for item in options['oplist'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>
