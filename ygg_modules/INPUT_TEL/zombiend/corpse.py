@@ -1,8 +1,9 @@
 from typing import Sequence, Mapping, Any
-from box import Box
 import abc
+import codecs
 from collections import ChainMap, defaultdict
 from flask import request as f_request, render_template
+from box import Box
 
 class PyModule(abc.ABC):
   _endpoints: Sequence[str]
@@ -74,6 +75,34 @@ class dict2(dict):
     rv = self.items()
     return rv
 
+  def iterkeys(self):
+    rv = self.keys()
+    return rv
+
+  def itervalues(self):
+    rv = self.values()
+    return rv
+
+
+class str2(str):
+  def encode(self, encoding=None, errors='strict'):
+    if encoding.casefold() in {'base64_codec', 'base64', 'base-64'}:
+      rv = super().encode('cp1251', errors)
+      rv = codecs.encode(rv, 'base64', errors)
+      rv = rv.decode('cp1251', errors)
+    else:
+      rv = super().encode(encoding, errors)
+    return rv
+
+  def __mod__(self, other):
+    rv = super().__mod__(other)
+    rv = str2(rv)
+    return rv
+
+  def __add__(self, other):
+    rv = super().__add__(other)
+    rv = str2(rv)
+    return rv
 
 def z_request_get(y_module) -> Box:
   rv = ChainBox2(
@@ -97,4 +126,5 @@ z_builtins = dict(
   locals=locals,
   dict=dict2,
   len=len,
+  str=str2,
   )

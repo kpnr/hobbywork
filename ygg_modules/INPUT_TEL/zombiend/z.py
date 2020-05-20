@@ -52,6 +52,7 @@ class Module(YggdrasilBranch):
     z_templates = self.templates_find()
     self.z_objects = Box(chain(z_scripts, z_templates), box_duplicates='error')
     backend.db_api.fetch_all = self.fetch_all
+    self.config.EXPLAIN_TEMPLATE_LOADING = True
     return
 
   @staticmethod

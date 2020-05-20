@@ -31,8 +31,8 @@
       <br />
       <input type="text" name="tid" id="tid" maxlength="127" />
       <input type="hidden" name="uid" value="{{ request.uid }}" />
-      <input type="hidden" name="id_site" value="{{ options.id_site }}" />
       <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
+      <input type="hidden" name="id_site" value="{{ options.id_site }}" />
     </form>
     <br />
     {%- if python: options.get('oplist') != None -%}
