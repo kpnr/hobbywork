@@ -1,0 +1,44 @@
+{%- extends "uicomponents/base_layout.html" -%}
+
+{%- block user_scripts -%}
+	<script language="javascript" src="file:///Application/start.js"></script>
+	<script language="javascript" src="{{ url_for('static', filename='tander/js_zope/CtrlNav.js') }}"></script>
+	<script language="javascript" src="{{ url_for('static', filename='tander/js_zope/DateEdit.js') }}"></script>
+	<script language="javascript" src="{{ url_for('static', filename='tander/js_zope/DIGSystem.js') }}"></script>
+	<style  type="text/css" src="{{ url_for('static', filename='tander/css_zope/common.css') }}"></style>
+	{%- block script -%}
+		<script language="javascript" >
+			function init(){OnBodyLoad();}
+			function befUnLoad(){}
+		</script>
+	{%- endblock -%}
+	<script language="javascript" >
+		function refr(delay){
+			if (document.loginform==null){
+				//alert(window.message.location);
+				window.message.location.reload();
+				setTimeout('refr()', 50000);
+			} 
+		}
+		document.ZOPE_GM=true;
+	</script>
+	<script language="javascript" src="{{ url_for('static', filename='tander/js_zope/checkSurvey') }}">
+	</script>
+{%- endblock -%}
+
+{%- block app_header__center -%}
+	{%- if ((request.has_key('uid') and request.uid and container.isInteger(request.uid)) or nothing) -%}
+		{{ ('%s : %s' % (here.getUserName(uid=request.uid), here.title))[:28] }}
+	{%- endif -%}
+{%- endblock -%}
+
+{%- block content -%}
+	{%- block error -%}
+		{%- if request.err or options.err or nothing -%}
+			<div>{{ request.err or options.err }}</div>
+		{%- endif -%}
+	{%- endblock -%}
+	<p>
+	{%- block data %}
+	{%- endblock -%}
+{%- endblock -%}

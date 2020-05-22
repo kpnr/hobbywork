@@ -174,6 +174,7 @@ def main() -> int:
   print(_('Интерфейс %s готов, шеф!') % interface_name)
   return 0
 
+
 def z_mod():
   import ast
   class ZDict(dict):
@@ -198,6 +199,7 @@ def z_mod():
   # z.__builtins__ = z_builtins
   # z.taskAction()
   return 0
+
 
 if __name__ == '__main__':
   exit_code = main()

@@ -193,6 +193,16 @@ def parseZobj(objs):
                 elif item['meta_type'] == 'Z SQL Method':
                     out = item['node']['src']
                     file_ext = '.sql'
+                elif item['meta_type'] == 'SyncDict':
+                    out = item['node'] or '{}'
+                    file_ext = '.dict'
+                elif item['meta_type'] == 'DTML Document':
+                    out = item['node']['raw']
+                    file_ext = '.dtml'
+                elif item['meta_type'] == 'External Method':
+                    out = item['node']
+                    out = 'Title: %s\nModule: %s\nFunction: %s\n' % (out['title'], out['_module'], out['_function'])
+                    file_ext = '.external'
                 else:
                     node = item['node']
                     out = node.get('data', '') or node.get('_body', '') or node.get('_text', '')\

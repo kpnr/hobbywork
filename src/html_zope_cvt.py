@@ -1,5 +1,6 @@
 from typing import Mapping, Sequence, Tuple
 from lxml.html import HTMLParser, Element, document_fromstring
+from tales_cvt import tales_expression_to_jinja as tal_expression_cvt
 
 ATTRS_ALLOWED = frozenset(
   'action align bgcolor border cellspacing class href id language length maxlength name onclick '
@@ -86,23 +87,13 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
         s = s[len('python:'):].strip(' \r\n\t')
       elif s.startswith('structure '):
         s = s[len('structure '):]
-        s = tal_expression_cvt(s)
+        s = '('+tal_expression_cvt(s)+')|safe'
       elif s.startswith('text '):
         s = s[len('text '):]
         s = tal_expression_cvt(s)
       else:
         s = tal_expression_cvt(s)
       s = '{{ '+s+' }}'
-      return s
-
-    def tal_expression_cvt(s: str) -> str:
-      if s.startswith('python:'):
-        s = s[len('python:'):]
-        s = s.strip()
-      else:
-        # it seems "path:" expression
-        s = s.replace('/', '.')
-        s = s.replace('|', ' or ')
       return s
 
     nonlocal output_enabled
