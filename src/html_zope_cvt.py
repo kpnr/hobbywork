@@ -1,13 +1,15 @@
 from typing import Mapping, Sequence, Tuple
-from lxml.html import HTMLParser, Element, document_fromstring
+import re
+from lxml.html import Element, soupparser
 from tales_cvt import tales_expression_to_jinja as tal_expression_cvt
 
 ATTRS_ALLOWED = frozenset(
-  'action align bgcolor border cellspacing class href id language length maxlength name onclick '
+  'action align bgcolor border cellspacing class colspan '
+  'href id language length maxlength name onclick '
   'style type '
   'value width '
   'metal:fill-slot metal:use-macro '
-  'tal:attributes tal:condition tal:content tal:repeat'.split(' ')
+  'tal:define tal:attributes tal:condition tal:content tal:repeat'.split(' ')
   )
 
 def node_visit(el: Element) -> None:
@@ -25,27 +27,8 @@ def node_visit(el: Element) -> None:
   return
 
 def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
-  html_test = '''<HTML metal:use-macro="here/main_template/macros/page">
-    <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'\',\'barcode\',\'\');}'"/>
-    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
-    
-    <div metal:fill-slot="data" align="center">
-        <b tal:content="options/mes"/><br>
-        <div style="width: 240px; word-break: break-all;">
-        <span tal:repeat="item options/data">
-            <a tal:attributes="href python:'gettelegaAction?uid=%s&id=%s&id_shtask=%s&outurl=%s&tcode=%s&tovarid=%s' % (request.uid, item.ID_ART, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tovarid'))">
-                <span class="smalltext" tal:content="item/NAME"/>
-            </a> 
-            <br>
-        </span> 
-        </div>
-        <br>
-        <a id='back' tal:attributes="href python: 'gettelegaAction?uid=%s&id_shtask=%s&outurl=%s&tcode=%s'%(request.uid, options.get('id_shtask'), request.outurl, options.get('tcode'))">Назад</a>
-    </div>
-</HTML>
-'''
   z_imports = set()
-  output_enabled = False
+  output_enabled = 0
   z_parse_out = []
 
   def z_parse(el: Element, level: int) -> None:
@@ -81,6 +64,39 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
         z_parse_out.append(indent + s)
       return
 
+    def tal_define_cvt(s: str):
+      def tal_to_def_list(s: str) -> Sequence[str]:
+        var_defs_dirty = s.split(';')
+        var_defs_clear = []
+        var_current = var_defs_dirty.pop(0)
+        for d in var_defs_dirty:
+          if d:
+            var_defs_clear.append(var_current)
+            var_current = d
+          else:
+            var_current += ';'
+        var_defs_clear.append(var_current)
+        return var_defs_clear
+      def tal_var_def_parse(s: str) -> Tuple[str, str]:
+        VAR_DEF_RE = re.compile(r"(?mxu) ^ \s* (?P<scope>(local|global) \s+)? (?P<name>\w+)"
+                                r"\s+ (?P<expr>.+) $")
+        m = VAR_DEF_RE.match(s)
+        scope, name, expr = m.group('scope', 'name', 'expr')
+        if scope == 'global':
+          raise NotImplementedError('tal:define <global> scope not implemented')
+        expr = tal_expression_cvt(expr)
+        return (name, expr)
+      var_defs = tal_to_def_list(s)
+      var_def_parsed = []
+      for var_def in var_defs:
+        var_parsed = tal_var_def_parse(var_def)
+        var_def_parsed.append(var_parsed)
+      var_names, var_values = zip(*var_def_parsed)
+      lval = ', '.join(var_names)
+      rval = ', '.join(var_values)
+      rv = lval + ' = ' + rval
+      return rv
+
     def tal_content_cvt(s: str) -> str:
       s = s.strip(' \r\n\t')
       if s.startswith('python:'):
@@ -109,14 +125,17 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       z_import_add(import_name)
     slot_name = el.attrib.pop('metal:fill-slot', '')
     if slot_name:
-      assert not output_enabled
-      output_enabled = True
+      output_enabled += 1
       emit('{%- block '+slot_name+' -%}')
       z_parse(el, level)
       emit('{%- endblock -%}')
       emit('')
-      output_enabled = False
+      output_enabled -= 1
       return
+    define = el.attrib.pop('tal:define', '')
+    if define:
+      define = tal_define_cvt(define)
+      emit('{{ set ' + define + ' }}')
     condition = el.attrib.pop('tal:condition', '')
     if condition:
       condition = tal_expression_cvt(condition)
@@ -141,22 +160,72 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       attrs = {a.strip(' '): tal_content_cvt(v.strip(' ')) for (a, v) in attrs}
       el.attrib.update(attrs)
     tag_open, tag_close = tag_open_close_get(el)
-    emit(tag_open)
+    is_dummy_tag = el.tag.casefold() == 'span' and not (el.text or el.tail)
+    if not is_dummy_tag:
+      emit(tag_open)
     if el.text:
       emit('  ' + el.text)
     for child in el:
-      z_parse(child, level)
-    if tag_close:
+      z_parse(child, level-1 if is_dummy_tag else level)
+    if tag_close and not is_dummy_tag:
       emit(tag_close)
     if el.tail:
       emit(el.tail)
     return
 
-  parser = HTMLParser()
-  doc = document_fromstring(z_json['_text'], parser, ensure_head_body=True)
+  # doc = soupparser.fromstring(html_test)
+  doc = soupparser.fromstring(z_json['_text'])
   z_parse(doc, 0)
   for imp in z_imports:
     yield '{%- extends "' + imp + '" -%}'
   for s in z_parse_out:
     yield s
   return
+
+html_test = '''<html metal:use-macro="here/main_template/macros/page">
+   <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'artbarcode_select\',\'artbarcode_select\');}'"/>
+    <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
+
+    <div metal:fill-slot="data" align="center">
+      <b>Расклейка баннеров</b>
+      <hr>
+      <form action='taskAction'> 
+          Отсканируйте ШК товара:<br>
+         <input type='text' name='artbarcode_select' id='artbarcode_select' maxlength="40">
+         <input type='hidden' name='uid' tal:attributes='value request/uid'>
+         <input type='hidden' name='id_site' tal:attributes='value options/id_site'>
+         <input type='hidden' name='tasks' tal:attributes='value options/tasks'>
+         <input type='hidden' name='tid' tal:attributes='value options/data/ID_SHTASK'>
+      </form>
+      Акция: <b tal:content="options/data/ACTNAME"/><br>
+      <table class='table1px'>
+        <tr>
+          <th></th>
+          <th>МП</th>
+          <th>Кол-во</th>
+        </tr>
+        <tr tal:repeat="item options/table">
+          <span tal:condition="python: item.get('ID_SHTASK')==None">
+             <td colspan='3' tal:content="python: item['ARTNAME']">  </td>
+          </span>  
+          <span tal:define="style python: '{background:#666666}'*(item.get('NO_PLAN')!='0')" tal:condition="python: item.get('ID_SHTASK')!=None">
+             <td tal:attributes="style style" tal:content="structure python: {'2':'V','3':'X'}.get(item['TASKSTATUS'],'&nbsp;')"></td>
+             <span tal:condition="python: item['TASKSTATUS']=='2'">
+               <td tal:attributes="style style"><a href='#' tal:content="item/SITENAME"/></td> 
+             </span> 
+             <span tal:condition="python: item['TASKSTATUS']!='2'">
+               <td tal:attributes="style style"><a tal:content="item/SITENAME"
+                tal:attributes="href python: 'taskAction?uid=%s&id_site=%s&tasks=%s&tid=%s&tid_select=%s' % (request.uid, options['id_site'],options['tasks'], options['data'].ID_SHTASK, item['ID_SHTASK'])"/></td> 
+             </span> 
+             <td tal:attributes="style style" tal:content="item/ARTQUANT"></td> 
+          </span> 
+        </tr>
+      </table>
+
+<br>
+
+      <br><a tal:attributes="href python: 'taskAction?uid=%s&id_site=%s&tasks=%s'% (request.uid,options['id_site'],options['tasks'])">Назад</a> 
+     <br><a  id='back' tal:attributes="href python: '../taskListAction?uid=%s&exit=true'%(request.uid)">Выход в главное меню</a>
+    </div>    
+</html>
+'''

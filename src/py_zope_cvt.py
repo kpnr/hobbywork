@@ -35,7 +35,7 @@ class ZAstTransformer(NodeTransformer):
 
 def py_zope_patch(src):
   #ast = py_parse(test_src, 'zope_script_file.py', 'exec')
-  ast = py_parse(src, 'zope_script_file.py', 'exec')
+  ast = py_parse(src, '', 'exec')
   z_ast_transformer = ZAstTransformer()
   ast = z_ast_transformer.visit(ast)
   dst = astor.to_source(ast)

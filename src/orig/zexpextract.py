@@ -148,6 +148,14 @@ def make_filelist(node, path, flist, index):
         flist.append({'node': index[oid], 'path': path + [i], 'meta_type': xobjs[i]})
     return flist
 
+def class_name_get(o):
+    if hasattr(o,'__class__'):
+        o = o.__class__
+    return o.__name__
+
+def attr_count_get(o):
+    rv = getattr(o,'__dict__', {})
+    return len(rv)
 
 def jdefault(o):
     """
@@ -156,7 +164,26 @@ def jdefault(o):
     import pdb; pdb.set_trace()
     return o.__dict__
     """
-    return repr(o)
+    class_name = class_name_get(o)
+    attr_count = attr_count_get(o)
+    rv = None
+    if class_name == 'copy_reg___newobj__' and attr_count == 5:
+        rv = dict(argmt=o.argmt, globals=o.globals, raw=o.raw, _vars=o._vars, __name__=o.__name__)
+    elif class_name == 'Shared_DC_Scripts_Bindings_NameAssignments' and attr_count == 1:
+        rv = dict(_asgns=o._asgns)
+    elif class_name == 'Shared_DC_Scripts_Signature_FuncCode' and attr_count == 2:
+        rv = dict(co_argcount=o.co_argcount, co_varnames=o.co_varnames)
+    elif class_name == 'Shared_DC_ZRDB_Aqueduct_Args' and attr_count == 2:
+        rv = dict(_data=o._data, _keys=o._keys)
+    elif class_name == 'Shared_DC_ZRDB_DA_SQL' and attr_count == 2:
+        rv = dict(__doc__=o.__doc__, __module__=o.__module__)
+    elif class_name == 'Ghost' and attr_count == 0:
+        rv = dict(oid=o.oid)
+    if rv is None:
+        rv = repr(o)
+    else:
+        rv = json.dumps(rv, ensure_ascii=False, indent=4, default=jdefault)
+    return rv
 
 
 def parseZobj(objs):
@@ -178,7 +205,7 @@ def parseZobj(objs):
 
         logging.getLogger(__name__).info('Extracting %s - %s', full_path, item['meta_type'])
         with open(directory + '/__meta/' + item['path'][-1], 'wb') as fh:
-            json.dump(item['node'], fh, ensure_ascii=False, indent=4, default=jdefault)
+            json.dump(item, fh, ensure_ascii=False, indent=4, default=jdefault)
 
         if item['meta_type'][0:6] != 'Folder':
                 if item['meta_type'] == 'File':

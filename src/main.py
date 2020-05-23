@@ -68,6 +68,7 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
 
   def file_describe(file_name_full: str, description: Any):
     files_desc[file_name_full] = description
+    print(_('Description: %s File: %s') % (description, file_name_full))
     return
 
   def files_desc_save():
@@ -86,25 +87,25 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
 
   def ygg_file_save() -> None:
     def ygg_sql_save():
-      rv = SqlZopeDef(z_json=z_json)
+      rv = SqlZopeDef(z_json=z_json['node'])
       sql_list.append(rv)
       return
 
     def ygg_html_save() -> None:
-      html_name = z_json['id']
+      html_name = z_json['node']['id']
       html_name = path.join(frontend_dir, html_name+'.html')
       file_describe(html_name, dict(type='template'))
       with open(html_name, 'wt', encoding='utf8') as yf:
-        for s in html_zope_cvt(z_json):
+        for s in html_zope_cvt(z_json['node']):
           yf.write(s + '\n')
       return
 
     def ygg_py_save() -> None:
-      py_name = z_json['id']
+      py_name = z_json['node']['id']
       py_name = path.join(backend_dir, py_name+'.py')
       file_describe(py_name, dict(type='python'))
       with open(py_name, 'wt', encoding='utf8') as yf:
-        for s in py_zope_cvt(z_json):
+        for s in py_zope_cvt(z_json['node']):
           yf.write(s + '\n')
       return
 
@@ -115,16 +116,50 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       module_content[func_name] = z_json
       return
 
-    if z_json.get('connection_id') == 'Interbase_database_connection':
+    z_type = z_json['meta_type']
+    if z_type == 'Z SQL Method':
       ygg_sql_save()
-    elif z_json.get('content_type') == 'text/html':
+    elif z_type == 'Page Template':
       ygg_html_save()
-    elif 'Python_magic' in z_json:
+    elif z_type == 'Script (Python)':
       ygg_py_save()
     elif '_module' in z_json:
       ygg_module_save()
     else:
       raise LookupError(_('Неизветный объект zope <%s>' % z_json[:1000]))
+    return
+
+  def ygg_sql_blocks_save():
+    # save all sql blocks into single py module
+    if not sql_list:
+      return
+    db_api_name = path.join(backend_dir, 'db_api.py')
+    file_describe(db_api_name, dict(type='db_api'))
+    with open(db_api_name, 'wt', encoding='utf8') as yf :
+      yf.write(
+        '# -*- coding: utf8 -*-\n'
+        '# Этот файл сгенерирован автоматически.\n\n\n'
+        )
+      for sql in sql_list :
+        yf.write(sql.to_ygg() + '\n')
+    return
+
+  def ygg_module_blocks_save():
+    if not module_list:
+      return
+    py_name = path.join(backend_dir, 'z_modules.py')
+    file_describe(py_name, dict(type='external'))
+    with open(py_name, 'wt', encoding='utf8') as yf :
+      yf.write('# -*- coding: utf-8 -*-\n'
+               '# Файл сгенерирован автоматически\n'
+               '# Модуль-заглушка. Реализацию придется искать/писать самому\n\n\n')
+      for name, content in module_list.items() :
+        for func_name, func_def in content.items() :
+          yf.write(
+            f'# Назначение: {func_def["title"]}"""\n'
+            )
+          yf.write(f"from ..zombiend.{name} import {func_def['_function']} as "
+                   f"{func_def['id']}\n\n\n")
     return
 
   zope_meta_dir = path.abspath(path.join(zope_path, '__meta'))
@@ -140,29 +175,9 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       z_json = json.load(zf)
     ygg_file_save()
   # finalization
-  # save all sql blocks into single py module
-  db_api_name = path.join(backend_dir, 'db_api.py')
-  file_describe(db_api_name, dict(type='db_api'))
-  with open(db_api_name, 'wt', encoding='utf8') as yf:
-    yf.write(
-      '# -*- coding: utf8 -*-\n'
-      '# Этот файл сгенерирован автоматически.\n\n\n'
-      )
-    for sql in sql_list:
-      yf.write(sql.to_ygg() + '\n')
+  ygg_sql_blocks_save()
   # save module blocks
-  py_name = path.join(backend_dir, 'z_modules.py')
-  file_describe(py_name, dict(type='external'))
-  with open(py_name, 'wt', encoding='utf8') as yf :
-    yf.write('# -*- coding: utf-8 -*-\n'
-             '# Файл сгенерирован автоматически\n'
-             '# Модуль-заглушка. Реализацию придется искать/писать самому\n\n\n')
-    for name, content in module_list.items():
-      for func_name, func_def in content.items():
-        yf.write(
-          f'# Назначение: {func_def["title"]}"""\n'
-          )
-        yf.write(f"from ..zombiend.{name} import {func_def['_function']} as {func_def['id']}\n\n\n")
+  ygg_module_blocks_save()
   # save file descriptions
   files_desc_save()
   return interface_name
