@@ -27,6 +27,7 @@ class SqlZopeDef(object):
     string=str,
     s=str,
     d=datetime,
+    float=float,
     )
   id: str
   title: str

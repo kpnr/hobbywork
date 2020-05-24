@@ -1,15 +1,15 @@
 from typing import Mapping, Sequence, Tuple
 import re
-from lxml.html import Element, soupparser
+from lxml.html import Element, soupparser, HtmlComment
 from tales_cvt import tales_expression_to_jinja as tal_expression_cvt
 
 ATTRS_ALLOWED = frozenset(
-  'action align bgcolor border cellspacing class colspan '
-  'href id language length maxlength name onclick '
-  'style type '
-  'value width '
+  'action align bgcolor border cellpadding cellspacing class colspan '
+  'disabled href id language length maxlength name onblur onclick '
+  'onkeydown onkeyup size style type '
+  'valign value width '
   'metal:fill-slot metal:use-macro '
-  'tal:define tal:attributes tal:condition tal:content tal:repeat'.split(' ')
+  'tal:define tal:attributes tal:condition tal:content tal:omit-tag tal:repeat'.split(' ')
   )
 
 def node_visit(el: Element) -> None:
@@ -49,13 +49,17 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
           v = f'"{v}"'
           rv += f' {k}={v}'
         return rv
-      o = '<'+el.tag + attrs_to_str(el.attrib)
-      if len(el) or el.text:
-        o += '>'
-        c = f'</{el.tag}>'
+      if isinstance(el, HtmlComment):
+        o = '<!--'
+        c = '-->'
       else:
-        o +=' />'
-        c = ''
+        o = '<'+el.tag + attrs_to_str(el.attrib)
+        if len(el) or el.text:
+          o += '>'
+          c = f'</{el.tag}>'
+        else:
+          o +=' />'
+          c = ''
       return o, c
 
     def emit(s: str) -> None:
@@ -145,7 +149,7 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       return
     repeat = el.attrib.pop('tal:repeat', '')
     if repeat:
-      repeat_var, repeat_expr = repeat.split(' ',1)
+      repeat_var, repeat_expr = (x.strip() for x in repeat.split(' ',1))
       repeat_expr = tal_expression_cvt(repeat_expr)
       emit('{%- for ' + repeat_var + ' in ' + repeat_expr + ' -%}')
       z_parse(el, level)
@@ -159,8 +163,14 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       attrs = [a.strip(' ').split(' ', 1) for a in attrs.split(';')]
       attrs = {a.strip(' '): tal_content_cvt(v.strip(' ')) for (a, v) in attrs}
       el.attrib.update(attrs)
+    omit = el.attrib.pop('tal:omit-tag', None)
     tag_open, tag_close = tag_open_close_get(el)
-    is_dummy_tag = el.tag.casefold() == 'span' and not (el.text or el.tail)
+    is_dummy_tag = isinstance(el.tag, str) and el.tag.casefold() == 'span' and not (el.text or el.tail)
+    if omit is not None:
+      if omit:
+        raise NotImplementedError('Non-empty <tal:omit-tag> attribute')
+      else:
+        is_dummy_tag = True
     if not is_dummy_tag:
       emit(tag_open)
     if el.text:
@@ -183,49 +193,40 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
   return
 
 html_test = '''<html metal:use-macro="here/main_template/macros/page">
-   <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'artbarcode_select\',\'artbarcode_select\');}'"/>
+   <script  metal:fill-slot="script" tal:content="python:'function init(){OnBodyLoad(\'\',\'\');}'"/>
     <div align="justify" metal:fill-slot="error" class="error" tal:condition="request/err|options/err|nothing" tal:content="structure request/err|options/err"/>
 
-    <div metal:fill-slot="data" align="center">
-      <b>Расклейка баннеров</b>
-      <hr>
-      <form action='taskAction'> 
-          Отсканируйте ШК товара:<br>
-         <input type='text' name='artbarcode_select' id='artbarcode_select' maxlength="40">
-         <input type='hidden' name='uid' tal:attributes='value request/uid'>
-         <input type='hidden' name='id_site' tal:attributes='value options/id_site'>
-         <input type='hidden' name='tasks' tal:attributes='value options/tasks'>
-         <input type='hidden' name='tid' tal:attributes='value options/data/ID_SHTASK'>
-      </form>
-      Акция: <b tal:content="options/data/ACTNAME"/><br>
-      <table class='table1px'>
-        <tr>
-          <th></th>
-          <th>МП</th>
-          <th>Кол-во</th>
-        </tr>
-        <tr tal:repeat="item options/table">
-          <span tal:condition="python: item.get('ID_SHTASK')==None">
-             <td colspan='3' tal:content="python: item['ARTNAME']">  </td>
-          </span>  
-          <span tal:define="style python: '{background:#666666}'*(item.get('NO_PLAN')!='0')" tal:condition="python: item.get('ID_SHTASK')!=None">
-             <td tal:attributes="style style" tal:content="structure python: {'2':'V','3':'X'}.get(item['TASKSTATUS'],'&nbsp;')"></td>
-             <span tal:condition="python: item['TASKSTATUS']=='2'">
-               <td tal:attributes="style style"><a href='#' tal:content="item/SITENAME"/></td> 
-             </span> 
-             <span tal:condition="python: item['TASKSTATUS']!='2'">
-               <td tal:attributes="style style"><a tal:content="item/SITENAME"
-                tal:attributes="href python: 'taskAction?uid=%s&id_site=%s&tasks=%s&tid=%s&tid_select=%s' % (request.uid, options['id_site'],options['tasks'], options['data'].ID_SHTASK, item['ID_SHTASK'])"/></td> 
-             </span> 
-             <td tal:attributes="style style" tal:content="item/ARTQUANT"></td> 
-          </span> 
-        </tr>
-      </table>
+    <div metal:fill-slot="data" align="center" >    
 
-<br>
+Текущие привязки товара:
+            <table class='table1px'>
+            <tr>
+       <td>МП</td>
+       <td>Паллет</td>
+       <td>Кол-во</td>
+            </tr>
+            <tr tal:repeat="item  python: container.GM_GETARTAMOUNTMERCH(id_art=request.id_art)">
+             <span tal:define="style python: '{background:#666666}'*(item.STATUS=='0')"> 
+              <td tal:attributes="style style">
+              <a href='#'>
+               <span class="smalltext" tal:content="python: item.SITENAME" />
+              </a>     </td>
 
-      <br><a tal:attributes="href python: 'taskAction?uid=%s&id_site=%s&tasks=%s'% (request.uid,options['id_site'],options['tasks'])">Назад</a> 
-     <br><a  id='back' tal:attributes="href python: '../taskListAction?uid=%s&exit=true'%(request.uid)">Выход в главное меню</a>
+   
+            <span tal:condition="python: container.GET_TYPE_PALLET(barcode=item.BIGNUMBER)[0]['IS_OPT']==1">
+              <td style="background-color: gray;" tal:content="python: item.BIGNUMBER"></td>
+            </span>  
+            <span tal:condition="python: container.GET_TYPE_PALLET(barcode=item.BIGNUMBER)[0]['IS_OPT']==0">
+              <td tal:attributes="style style" tal:content="python: item.BIGNUMBER"></td>
+            </span> 
+
+              <td tal:attributes="style style" tal:content="python: item.AMOUNT"></td>
+             </span>
+            </tr>
+          </table>
+
+   <br><a id='back' tal:attributes="href python: 'artAction?uid=%s&sbarcode=%s&name=%s&num=%s' % (request.uid,request.sbarcode,request.name,request['num'])">Назад</a>
     </div>    
 </html>
+
 '''
