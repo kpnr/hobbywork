@@ -24,7 +24,7 @@ class CustomUnpickler(Unpickler):
     def find_class(self, module, name):
         clname = ('%s.%s' % (module, name)).replace('.', '_').replace('-', '_')
         # print '>>find_class ', module,name, ' -> ', clname
-        exec ('class %s(Dummy2):pass' % clname)
+        exec('class %s(Dummy2):pass' % clname)
         return eval(clname)
 
 
@@ -148,15 +148,19 @@ def make_filelist(node, path, flist, index):
         flist.append({'node': index[oid], 'path': path + [i], 'meta_type': xobjs[i]})
     return flist
 
+
 def class_name_get(o):
-    if hasattr(o,'__class__'):
+    if hasattr(o, '__class__'):
         o = o.__class__
     return o.__name__
 
+
 def attr_count_get(o):
-    rv = getattr(o,'__dict__', {})
+    rv = getattr(o, '__dict__', {})
     return len(rv)
 
+
+# noinspection PyProtectedMember
 def jdefault(o):
     """
     if isinstance(o, Dummy2):
@@ -209,35 +213,35 @@ def parseZobj(objs):
             json.dump(item, fh, ensure_ascii=False, indent=4, default=jdefault)
 
         if meta_type[0:6] != 'Folder':
-                if meta_type == 'File':
-                    out = item['node']['data'].oid if hasattr(item['node']['data'], 'oid') else item['node']['data']
-                    file_ext = ''
-                elif meta_type == 'Script (Python)':
-                    out = item['node']['_body']
-                    file_ext = '.py'
-                elif meta_type == 'Page Template':
-                    out = item['node']['_text']
-                    file_ext = '.html'
-                elif meta_type == 'Z SQL Method':
-                    out = item['node']['src']
-                    file_ext = '.sql'
-                elif meta_type == 'SyncDict':
-                    out = item['node'] or '{}'
-                    file_ext = '.dict'
-                elif meta_type == 'DTML Document':
-                    out = item['node']['raw']
-                    file_ext = '.dtml'
-                elif meta_type == 'External Method':
-                    out = item['node']
-                    out = 'Title: %s\nModule: %s\nFunction: %s\n' % (out['title'], out['_module'], out['_function'])
-                    file_ext = '.external'
-                else:
-                    node = item['node']
-                    out = node.get('data', '') or node.get('_body', '') or node.get('_text', '')\
-                           or node.get('src', '') or 'WTF?'
-                    file_ext = ''
-                with open(full_path + file_ext, 'wb') as fh :
-                    fh.write(out)
+            if meta_type == 'File':
+                out = item['node']['data'].oid if hasattr(item['node']['data'], 'oid') else item['node']['data']
+                file_ext = ''
+            elif meta_type == 'Script (Python)':
+                out = item['node']['_body']
+                file_ext = '.py'
+            elif meta_type == 'Page Template':
+                out = item['node']['_text']
+                file_ext = '.html'
+            elif meta_type == 'Z SQL Method':
+                out = item['node']['src']
+                file_ext = '.sql'
+            elif meta_type == 'SyncDict':
+                out = item['node'] or '{}'
+                file_ext = '.dict'
+            elif meta_type == 'DTML Document':
+                out = item['node']['raw']
+                file_ext = '.dtml'
+            elif meta_type == 'External Method':
+                out = item['node']
+                out = 'Title: %s\nModule: %s\nFunction: %s\n' % (out['title'], out['_module'], out['_function'])
+                file_ext = '.external'
+            else:
+                node = item['node']
+                out = node.get('data', '') or node.get('_body', '') or node.get('_text', '')\
+                    or node.get('src', '') or 'WTF?'
+                file_ext = ''
+            with open(full_path + file_ext, 'wb') as fh:
+                fh.write(out)
     return
 
 
