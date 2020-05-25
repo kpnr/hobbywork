@@ -203,30 +203,31 @@ def parseZobj(objs):
         if not os.path.exists(directory + '/__meta/'):
             os.makedirs(directory + '/__meta/')
 
-        logging.getLogger(__name__).info('Extracting %s - %s', full_path, item['meta_type'])
+        meta_type = item['meta_type']
+        logging.getLogger(__name__).info('Extracting %s - %s', full_path, meta_type)
         with open(directory + '/__meta/' + item['path'][-1], 'wb') as fh:
             json.dump(item, fh, ensure_ascii=False, indent=4, default=jdefault)
 
-        if item['meta_type'][0:6] != 'Folder':
-                if item['meta_type'] == 'File':
+        if meta_type[0:6] != 'Folder':
+                if meta_type == 'File':
                     out = item['node']['data'].oid if hasattr(item['node']['data'], 'oid') else item['node']['data']
                     file_ext = ''
-                elif item['meta_type'] == 'Script (Python)':
+                elif meta_type == 'Script (Python)':
                     out = item['node']['_body']
                     file_ext = '.py'
-                elif item['meta_type'] == 'Page Template':
+                elif meta_type == 'Page Template':
                     out = item['node']['_text']
                     file_ext = '.html'
-                elif item['meta_type'] == 'Z SQL Method':
+                elif meta_type == 'Z SQL Method':
                     out = item['node']['src']
                     file_ext = '.sql'
-                elif item['meta_type'] == 'SyncDict':
+                elif meta_type == 'SyncDict':
                     out = item['node'] or '{}'
                     file_ext = '.dict'
-                elif item['meta_type'] == 'DTML Document':
+                elif meta_type == 'DTML Document':
                     out = item['node']['raw']
                     file_ext = '.dtml'
-                elif item['meta_type'] == 'External Method':
+                elif meta_type == 'External Method':
                     out = item['node']
                     out = 'Title: %s\nModule: %s\nFunction: %s\n' % (out['title'], out['_module'], out['_function'])
                     file_ext = '.external'
