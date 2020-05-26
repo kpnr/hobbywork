@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -17,14 +17,14 @@
   <div align="center" style="font-size:11px">
     <b>
       <span>
-        {{ options.opnumber }}
+        {{ options["opnumber"] }}
       </span>
     </b>
     <br />
     Принятые тележки:
     <br />
     <br />
-    {%- if options.get('cartlist') != None -%}
+    {%- if  options.get('cartlist') != None -%}
       <span>
         <table bgcolor="#ffffff" border="0" cellspacing="1">
           <tr class="tabcaption">
@@ -32,17 +32,17 @@
               Номер
             </td>
           </tr>
-          {%- for item in options['cartlist'] -%}
+          {%- for item in  options['cartlist'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>
-                  {%- if item.ISTRANZ == 1 -%}
+                  {%- if  item.ISTRANZ == 1 -%}
                     <span>
                       Тележка
                     </span>
                   {%- endif -%}
                   <a href="#">
-                    {{ item.ID_OBJECT }}
+                    {{ item["ID_OBJECT"] }}
                   </a>
                 </td>
               </tr>

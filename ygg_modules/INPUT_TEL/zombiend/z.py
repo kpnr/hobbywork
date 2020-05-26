@@ -5,8 +5,8 @@ from typing import Iterable, List, Sequence, Callable, Dict, Tuple, Any, NewType
 import abc
 from os import listdir, path
 from importlib import import_module
-from .corpse import (Box, ChainBox2, dict2, z_builtins, PyModule, z_request_get, render_template,\
-                     IBox)
+from .corpse import (Box, ChainBox2, dict2, z_builtins, PyModule, z_request_get, render_template, current_app, IBox,
+                     j_is_none)
 from appserver.yggdrasil_branch import YggdrasilBranch
 from .. import backend
 
@@ -19,8 +19,8 @@ class CodeObject(abc.ABC):
   co_argcount: int
   co_nlocals: int
   co_varnames: Tuple[str]
-  co_cellvars:Tuple[str]
-  co_freevars:Tuple[str]
+  co_cellvars: Tuple[str]
+  co_freevars: Tuple[str]
   co_code: bytes
   co_consts: Tuple
   co_names: Tuple[str]
@@ -30,7 +30,9 @@ class CodeObject(abc.ABC):
   co_stacksize: int
   co_flags: int
 
+
 INTERFACE_NAME = __name__.split('.', 1)[0]
+
 Z_SCRIPT_PKG = INTERFACE_NAME + '.backend'
 
 
@@ -53,6 +55,7 @@ class Module(YggdrasilBranch):
     self.z_objects = Box(chain(z_scripts, z_templates), box_duplicates='error')
     backend.db_api.fetch_all = self.fetch_all
     self.config.EXPLAIN_TEMPLATE_LOADING = True
+    current_app.jinja_env.tests['None'] = j_is_none
     return
 
   @staticmethod
@@ -90,6 +93,7 @@ class Module(YggdrasilBranch):
       title='Title not implemented yet',
       )
     template_name = self.name+'/'+template_name+'.html'
+
     def render_func(**kwargs) -> str:
       rv = render_template(
         template_name,
@@ -98,7 +102,6 @@ class Module(YggdrasilBranch):
         here=kwargs.pop('here', z_here),
         len=kwargs.pop('len', z_builtins['len']),
         options=defaultdict(lambda : '', kwargs),
-        **{'None': None},
         )
       return rv
     return render_func
@@ -178,7 +181,7 @@ class Module(YggdrasilBranch):
     return rv
 
   def fetch_all(self, sql, *args):
-    with self.database.acquire(True) as tr :
+    with self.database.acquire(True) as tr:
       rows = tr.execute(sql, args, tr.ALL)
     rv = []
     for row in rows:

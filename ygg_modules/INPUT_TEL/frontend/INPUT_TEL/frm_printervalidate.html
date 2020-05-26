@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -20,12 +20,12 @@
       <br />
       <input type="hidden" name="act" value="prn_printervalidate" />
       <input type="text" name="labelbarcode" id="labelbarcode" maxlength="127" />
-      <input type="hidden" name="uid" value="{{ request.uid }}" />
-      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
-      <input type="hidden" name="id_cart" value="{{ options.id_cart }}" />
-      <input type="hidden" name="printersk" value="{{ options.printersk }}" />
-      <input type="hidden" name="outurl" value="{{ request.outurl }}" />
-      <input type="hidden" name="tcode" value="{{ options.tcode }}" />
+      <input type="hidden" name="uid" value="{{ request["uid"] }}" />
+      <input type="hidden" name="id_shtask" value="{{ options["id_shtask"] }}" />
+      <input type="hidden" name="id_cart" value="{{ options["id_cart"] }}" />
+      <input type="hidden" name="printersk" value="{{ options["printersk"] }}" />
+      <input type="hidden" name="outurl" value="{{ request["outurl"] }}" />
+      <input type="hidden" name="tcode" value="{{ options["tcode"] }}" />
     </form>
   </div>
 {%- endblock -%}

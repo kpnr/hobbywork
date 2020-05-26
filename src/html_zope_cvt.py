@@ -5,17 +5,19 @@ from tales_cvt import tales_expression_to_jinja as tal_expression_cvt
 
 ATTRS_ALLOWED = frozenset(
   'action align bgcolor border cellpadding cellspacing class colspan '
-  'disabled href id language length maxlength name onblur onclick '
-  'onkeydown onkeyup size style type '
+  'disabled href id language length maxlength method name onblur onclick '
+  'onfocus onkeydown onkeypress onkeyup rules size style type '
   'valign value width '
   'metal:fill-slot metal:use-macro '
-  'tal:define tal:attributes tal:condition tal:content tal:omit-tag tal:repeat'.split(' ')
+  'tal:define tal:attributes tal:condition tal:content tal:omit-tag tal:repeat tal:replace'.split(' ')
   )
 
 def node_visit(el: Element) -> None:
   REPLACE_NAMES = {
     'aling': 'align'
     }
+  if getattr(el, 'tag', '') == 'meta':
+    return None
   for a_name in frozenset(el.attrib.keys()) - ATTRS_ALLOWED:
     a_name_new = REPLACE_NAMES.get(a_name)
     if a_name_new is not None:
@@ -24,7 +26,7 @@ def node_visit(el: Element) -> None:
         el.attrib.update({a_name_new: a_value})
     else:
       breakpoint()
-  return
+  return el
 
 def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
   z_imports = set()
@@ -72,8 +74,9 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       def tal_to_def_list(s: str) -> Sequence[str]:
         var_defs_dirty = s.split(';')
         var_defs_clear = []
-        var_current = var_defs_dirty.pop(0)
+        var_current = var_defs_dirty.pop(0).strip()
         for d in var_defs_dirty:
+          d = d.strip()
           if d:
             var_defs_clear.append(var_current)
             var_current = d
@@ -117,7 +120,9 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       return s
 
     nonlocal output_enabled
-    node_visit(el)
+    el = node_visit(el)
+    if el is None:
+      return
     if output_enabled:
       level += 1
     if el.text is not None:
@@ -158,6 +163,11 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
     content = el.attrib.pop('tal:content', '')
     if content:
       el.text = tal_content_cvt(content)
+    replace = el.attrib.pop('tal:replace', '')
+    if replace:
+      replace_expr = tal_content_cvt(replace)
+      emit('{{ ' + replace_expr + ' }}')
+      return
     attrs = el.attrib.pop('tal:attributes', '')
     if attrs:
       attrs = [a.strip(' ').split(' ', 1) for a in attrs.split(';')]

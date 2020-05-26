@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -16,15 +16,15 @@
 {%- block data -%}
   <div align="center">
     <b>
-      {{ options.mes }}
+      {{ options["mes"] }}
     </b>
     <br />
     <div style="width: 240px; word-break: break-all;">
-      {%- for item in options.data -%}
+      {%- for item in options["data"] -%}
         <span>
           <a href="{{ 'gettelegaAction?uid=%s&id=%s&id_shtask=%s&outurl=%s&tcode=%s&tovarid=%s' % (request.uid, item.ID_ART, options.get('id_shtask'), request.outurl, options.get('tcode'), options.get('tovarid')) }}">
             <span class="smalltext">
-              {{ item.NAME }}
+              {{ item["NAME"] }}
             </span>
           </a>
           <br />

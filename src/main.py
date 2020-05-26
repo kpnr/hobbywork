@@ -1,6 +1,6 @@
 import argparse
 import json
-import re
+import os
 from gettext import gettext as _
 from dataclasses import dataclass
 from os import path, scandir, makedirs
@@ -12,7 +12,7 @@ from html_zope_cvt import html_zope_cvt
 DirPath = NewType('DirPath', str)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class Settings(object):
   source_dir: DirPath
   destination_dir: DirPath
@@ -116,6 +116,14 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       module_content[func_name] = z_json
       return
 
+    def ygg_txt_save():
+      txt_name = z_json['path'][-1]
+      txt_name = path.join(backend_dir, txt_name)
+      file_describe(txt_name, dict(type='text'))
+      with open(txt_name, 'wt', encoding='utf8') as yf:
+        yf.write(z_json['node']['data'])
+      return
+
     z_type = z_json['meta_type']
     if z_type == 'Z SQL Method':
       ygg_sql_save()
@@ -123,6 +131,10 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       ygg_html_save()
     elif z_type == 'Script (Python)':
       ygg_py_save()
+    elif z_type == 'Folder':
+      input(_('WARNING! Folder object at <%s>. Press Enter') % ('/'.join(z_json['path'])))
+    elif z_type == 'File':
+      ygg_txt_save()
     elif '_module' in z_json:
       ygg_module_save()
     else:
@@ -185,8 +197,17 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
 
 def main() -> int:
   settings = settings_get()
-  interface_name = interface_copy(settings.source_dir, settings.destination_dir)
-  print(_('Интерфейс %s готов, шеф!') % interface_name)
+  iface_root = settings.source_dir
+  for iface_dir in os.scandir(iface_root):
+    if not iface_dir.is_dir():
+      continue
+    if iface_dir.name.upper() != iface_dir.name:
+      continue
+    if iface_dir.name < 'FI':
+      continue
+    settings.source_dir = os.path.join(iface_dir, iface_dir)
+    interface_name = interface_copy(settings.source_dir, settings.destination_dir)
+    print(_('Интерфейс %s готов, шеф!') % interface_name)
   return 0
 
 

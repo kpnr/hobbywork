@@ -2,7 +2,7 @@ from typing import Sequence, Mapping, Any
 import abc
 import codecs
 from collections import ChainMap, defaultdict
-from flask import request as f_request, render_template
+from flask import request as f_request, render_template, current_app
 from box import Box
 
 class PyModule(abc.ABC):
@@ -84,14 +84,26 @@ class dict2(dict):
     return rv
 
 
+# noinspection PyPep8Naming
 class str2(str):
-  def encode(self, encoding=None, errors='strict'):
+  def encode(self, encoding='', errors='strict'):
     if encoding.casefold() in {'base64_codec', 'base64', 'base-64'}:
       rv = super().encode('cp1251', errors)
       rv = codecs.encode(rv, 'base64', errors)
       rv = rv.decode('cp1251', errors)
+      rv = str2(rv)
     else:
-      rv = super().encode(encoding, errors)
+      rv = super().encode(encoding or None, errors)
+    return rv
+
+  def decode(self, encoding='', errors='strict'):
+    rv = self.encode('cp1251', errors)
+    if encoding.casefold() in {'base64_codec', 'base64', 'base-64'}:
+      rv = codecs.decode(rv, 'base64', errors)
+      rv = rv.decode('cp1251', errors)
+    else:
+      rv = rv.decode(encoding or None, errors)
+    rv = str2(rv)
     return rv
 
   def __mod__(self, other):
@@ -104,22 +116,32 @@ class str2(str):
     rv = str2(rv)
     return rv
 
-def z_request_get(y_module) -> Box:
+  def __getitem__(self, item):
+    rv = super().__getitem__(item)
+    rv = str2(rv)
+    return rv
+
+
+def z_request_get(y_module) -> ChainBox2:
   rv = ChainBox2(
     Box(),
     Box(
       RESPONSE=None,
       SESSION=y_module.heap,
       ),
-    f_request.values,
+    {k: str2(v) if isinstance(v, str) and not isinstance(v, str2) else v for k, v in f_request.values.items()},
     dict(
       uid=y_module.user.uid,
       headers=f_request.headers,  # TODO: restructure or remove base_layout
       ),
-    defaultdict(lambda : '')
+    defaultdict(lambda: '')
     )
   return rv
 
+
+def j_is_none(x: Any) -> bool:
+  rv = x is None
+  return rv
 
 z_builtins = dict(
   globals=globals,

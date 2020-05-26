@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -33,20 +33,20 @@
       Отсканируйте ШК тележки
       <br />
       <input type="text" name="tid" id="tid" maxlength="127" />
-      <input type="hidden" name="uid" value="{{ request.uid }}" />
-      <input type="hidden" name="id_site" value="{{ options.id_site }}" />
-      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
+      <input type="hidden" name="uid" value="{{ request["uid"] }}" />
+      <input type="hidden" name="id_site" value="{{ options["id_site"] }}" />
+      <input type="hidden" name="id_shtask" value="{{ options["id_shtask"] }}" />
       <input type="hidden" name="act" value="scan1" />
     </form>
     <br />
-    {%- if options.get('route_list') != None and len(options['route_list']) -%}
+    {%- if  options.get('route_list') != None and len(options['route_list']) -%}
       <span>
         Незавершенные маршруты:
         <br />
-        {%- for item in options['route_list'] -%}
+        {%- for item in  options['route_list'] -%}
           <span>
             <a href="{{ 'routeAction?uid=%s&id_site=%s&id_shtask=%s&id_route=%s&act=select_route' % (request.uid, options.get('id_site'), options.get('id_shtask'), item.ID_ROUTE) }}">
-              {{ item.ID_ROUTE }}
+              {{ item["ID_ROUTE"] }}
             </a>
             <br />
           </span>

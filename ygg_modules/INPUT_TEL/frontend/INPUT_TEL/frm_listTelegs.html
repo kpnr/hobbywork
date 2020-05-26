@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -23,31 +23,31 @@
       Отсканируйте товары, лежащие на тележке:
       <br />
       <input type="text" name="tovarid" id="tovarid" maxlength="40" />
-      <input type="hidden" name="uid" value="{{ request.uid }}" />
-      <input type="hidden" name="outurl" value="{{ request.outurl }}" />
-      <input type="hidden" name="tcode" value="{{ options.tcode }}" />
-      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
+      <input type="hidden" name="uid" value="{{ request["uid"] }}" />
+      <input type="hidden" name="outurl" value="{{ request["outurl"] }}" />
+      <input type="hidden" name="tcode" value="{{ options["tcode"] }}" />
+      <input type="hidden" name="id_shtask" value="{{ options["id_shtask"] }}" />
     </form>
-    {%- if options.get('currenttovar') is not None -%}
+    {%- if  options.get('currenttovar') is not None  -%}
       <span>
         <br />
         Отсканировано товаров:
         <span>
-          {{ options.totalcnt }}
+          {{ options["totalcnt"] }}
         </span>
         шт.
         <br />
         <br />
         <b>
           <span>
-            {{ options.currenttovar }}
+            {{ options["currenttovar"] }}
           </span>
         </b>
         <br />
         <br />
       </span>
     {%- endif -%}
-    {%- if options.get('alltovar') is not None -%}
+    {%- if  options.get('alltovar') is not None -%}
       <span>
         Список вероятных номеров тележек:
         <br />
@@ -63,12 +63,12 @@
               Не совпало
             </td>
           </tr>
-          {%- for item in options['alltovar'] -%}
+          {%- for item in  options['alltovar'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>
                   <a href="{{ 'gettelegaAction?act=viewtelega&uid=%s&tid=%s&id_shtask=%s&outurl=%s&tcode=%s&tnumber=%s' % (request.uid, item.ID_SHTASK, options.get('id_shtask'), request.get('outurl'), options.get('tcode'), item.NUMBER) }}">
-                    {{ item.NUMBER }}
+                    {{ item["NUMBER"] }}
                   </a>
                   <br />
                   <span>
@@ -80,10 +80,10 @@
                   </span>
                 </td>
                 <td>
-                  {{ item.COUNTS }}
+                  {{ item["COUNTS"] }}
                 </td>
                 <td>
-                  {{ item.COUNTNS }}
+                  {{ item["COUNTNS"] }}
                 </td>
               </tr>
             </span>

@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -19,7 +19,7 @@
       Отсканируйте ШК экспедиции:
       <br />
       <input type="text" name="mpsk" id="mpsk" maxlength="40" />
-      <input type="hidden" name="uid" value="{{ request.uid }}" />
+      <input type="hidden" name="uid" value="{{ request["uid"] }}" />
     </form>
     <br />
     <a id="back" href="{{ '../taskListAction?uid=%s&exit=true'%(request.uid) }}">

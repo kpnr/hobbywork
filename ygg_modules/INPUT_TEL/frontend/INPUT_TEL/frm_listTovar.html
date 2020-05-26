@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -18,7 +18,7 @@
     <b>
       Тележка №:
       <span>
-        {{ options.tnumber }}
+        {{ options["tnumber"] }}
       </span>
     </b>
     <br />
@@ -27,7 +27,7 @@
       Распечатать ШК
     </a>
     <br />
-    {%- if options.get('t_ok') != None -%}
+    {%- if  options.get('t_ok') != None -%}
       <span>
         Совпадения:
         <br />
@@ -40,18 +40,18 @@
               Ост
             </td>
           </tr>
-          {%- for item in options['t_ok'] -%}
+          {%- for item in  options['t_ok'] -%}
             <span>
               <tr bgcolor="#000000">
                 <td>
                   <div style="width: 180px; word-break: break-all !important;">
                     <a href="#">
-                      {{ item.ARTNAME }}
+                      {{ item["ARTNAME"] }}
                     </a>
                   </div>
                 </td>
                 <td align="center">
-                  {{ item.ARTREST }}
+                  {{ item["ARTREST"] }}
                 </td>
               </tr>
             </span>
@@ -59,7 +59,7 @@
         </table>
       </span>
     {%- endif -%}
-    {%- if options.get('t_diff') != None -%}
+    {%- if  options.get('t_diff') != None -%}
       <span>
         Различия:
         <br />
@@ -72,16 +72,16 @@
               Ост
             </td>
           </tr>
-          {%- for item in options['t_diff'] -%}
+          {%- for item in  options['t_diff'] -%}
             <span>
               <tr bgcolor="#000000">
                 <td>
                   <a href="#">
-                    {{ item.ARTNAME }}
+                    {{ item["ARTNAME"] }}
                   </a>
                 </td>
                 <td align="center">
-                  {{ item.ARTREST }}
+                  {{ item["ARTREST"] }}
                 </td>
               </tr>
             </span>
@@ -89,7 +89,7 @@
         </table>
       </span>
     {%- endif -%}
-    {%- if options.get('t_notscaned') != None -%}
+    {%- if  options.get('t_notscaned') != None -%}
       <span>
         Не отсканировано с тележки:
         <br />
@@ -102,16 +102,16 @@
               Ост
             </td>
           </tr>
-          {%- for item in options['t_notscaned'] -%}
+          {%- for item in  options['t_notscaned'] -%}
             <span>
               <tr bgcolor="#000000">
                 <td>
                   <a href="#">
-                    {{ item.ARTNAME }}
+                    {{ item["ARTNAME"] }}
                   </a>
                 </td>
                 <td align="center">
-                  {{ item.ARTREST }}
+                  {{ item["ARTREST"] }}
                 </td>
               </tr>
             </span>

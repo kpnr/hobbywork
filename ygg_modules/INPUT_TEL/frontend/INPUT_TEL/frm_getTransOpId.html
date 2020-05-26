@@ -6,16 +6,16 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
 
 {%- block data -%}
   <div align="center" style="font-size:11px">
-    {%- if options.get('oplist') != None -%}
+    {%- if  options.get('oplist') != None -%}
       <span>
         <table bgcolor="#ffffff" border="0" cellspacing="1">
           <tr class="tabcaption">
@@ -26,16 +26,16 @@
               Дата операции
             </td>
           </tr>
-          {%- for item in options['oplist'] -%}
+          {%- for item in  options['oplist'] -%}
             <span>
               <tr bgcolor="#000000" align="center">
                 <td>
                   <a href="{{ 'taskAction?uid=%s&id_site=%s&trans_opid=%s&id_shtask=%s&tid=%s&trans_id_shtask=%s' % (request.uid, options.get('id_site'), item.ID_OP, options.get('id_shtask'), options.get('tid'), item.ID_SHTASK) }}">
-                    {{ item.NAMECONTR }}
+                    {{ item["NAMECONTR"] }}
                   </a>
                 </td>
                 <td>
-                  {{ item.OPDATE }}
+                  {{ item["OPDATE"] }}
                 </td>
               </tr>
             </span>

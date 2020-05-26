@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 from typing import Mapping, Generator, Optional, Any
 from ast import parse as py_parse, NodeTransformer, AST, Str, Call, Load, Name, copy_location
 import astor
@@ -45,19 +46,42 @@ def py_zope_patch(src):
       rv = 0
     return rv
 
+  def fix_print_stmt(lines, lineno, col):
+    PRINT_RE = re.compile(r'(?x) (?P<indent>\s*) print \s* (?P<arg>[^(\s].*)? $')
+    line_str = lines[lineno]
+    m = PRINT_RE.match(line_str)
+    if m:
+      line_str = m['indent'] + 'print(' + m['arg'] + ')'
+      lines[lineno] = line_str
+      rv = 1
+    else:
+      rv = 0
+    return rv
+
   # src = test_src
   parse_flag = 1
   while parse_flag:
     try:
       parse_flag = 0
       ast = py_parse(src, '', 'exec')
+    except TabError as e:
+      line = e.lineno - 1
+      src_lined = src.split('\n')
+      src_lined[line] = src_lined[line].replace('\t', ' '*8)
+      src = '\n'.join(src_lined)
+      parse_flag = 1
     except SyntaxError as e:
       line = e.lineno - 1
       col = e.offset
       src_lined = src.split('\n')
-      parse_flag = fix_not_eq_op(src_lined, line, col)
-      if parse_flag:
+      if fix_not_eq_op(src_lined, line, col):
+        parse_flag = 1
         src = '\n'.join(src_lined)
+      elif fix_print_stmt(src_lined, line, col):
+        parse_flag = 1
+        src = '\n'.join(src_lined)
+      else:
+        breakpoint()
   z_ast_transformer = ZAstTransformer()
   ast = z_ast_transformer.visit(ast)
   dst = astor.to_source(ast)

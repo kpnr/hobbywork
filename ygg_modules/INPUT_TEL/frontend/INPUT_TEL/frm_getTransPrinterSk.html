@@ -6,9 +6,9 @@
 {%- endblock -%}
 
 {%- block error -%}
-  {%- if request.err or options.err or nothing -%}
+  {%- if request["err"] or options["err"] or nothing -%}
     <div align="justify" class="error">
-      {{ request.err or options.err }}
+      {{ (request["err"] or options["err"])|safe }}
     </div>
   {%- endif -%}
 {%- endblock -%}
@@ -19,12 +19,12 @@
       Отсканируйте ШК принтера:
       <br />
       <input type="text" name="trans_printersk" id="trans_printersk" maxlength="40" />
-      <input type="hidden" name="uid" value="{{ request.uid }}" />
-      <input type="hidden" name="id_site" value="{{ options.id_site }}" />
-      <input type="hidden" name="id_shtask" value="{{ options.id_shtask }}" />
-      <input type="hidden" name="tid" value="{{ options.tid }}" />
-      <input type="hidden" name="trans_opid" value="{{ options.trans_opid }}" />
-      <input type="hidden" name="trans_id_shtask" value="{{ options.trans_id_shtask }}" />
+      <input type="hidden" name="uid" value="{{ request["uid"] }}" />
+      <input type="hidden" name="id_site" value="{{ options["id_site"] }}" />
+      <input type="hidden" name="id_shtask" value="{{ options["id_shtask"] }}" />
+      <input type="hidden" name="tid" value="{{ options["tid"] }}" />
+      <input type="hidden" name="trans_opid" value="{{ options["trans_opid"] }}" />
+      <input type="hidden" name="trans_id_shtask" value="{{ options["trans_id_shtask"] }}" />
     </form>
   </div>
 {%- endblock -%}
