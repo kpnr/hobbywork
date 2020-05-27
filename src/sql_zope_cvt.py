@@ -18,8 +18,8 @@ class SqlArgDef(object):
 @dataclass
 class SqlZopeDef(object):
   RE_INPUT_VAR = re.compile(
-    r'(?ax)(?P<dtml><dtml-sqlvar \s+ (?P<id>[A-Za-z][\w$]*) \s+ type=\"(?P<type>string|int|float)\"'
-    r'(?:\s+(?P<optional>optional))?\s*>)'
+    r'(?x)<dtml-sqlvar \s+ (?P<id>[A-Za-z][\w$]*) \s+ type=\"(?P<type>string|int|float)\"'
+    r'(\s+(?P<optional>optional)(=boolean)?)*\s*>'
     )
   STR_TO_TYPE = dict(
     int=int,
@@ -58,9 +58,9 @@ class SqlZopeDef(object):
     for var_match in cls.RE_INPUT_VAR.finditer(z_def):
       rv.append(
         SqlArgDef(
-          id=var_match.group('id'),
-          type=cls.STR_TO_TYPE[var_match.group('type')],
-          optional=bool(var_match.group('optional'))
+          id=var_match['id'],
+          type=cls.STR_TO_TYPE[var_match['type']],
+          optional=bool(var_match['optional'])
           )
         )
     assert len(rv) == z_def.count('dtml-sqlvar')

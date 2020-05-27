@@ -110,10 +110,10 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       return
 
     def ygg_module_save():
-      py_name = z_json['id']
+      py_name = z_json['node']['id']
       module_content= module_list.setdefault(py_name, dict())
-      func_name = z_json['_function']
-      module_content[func_name] = z_json
+      func_name = z_json['node']['_function']
+      module_content[func_name] = z_json['node']
       return
 
     def ygg_txt_save():
@@ -135,7 +135,7 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       input(_('WARNING! Folder object at <%s>. Press Enter') % ('/'.join(z_json['path'])))
     elif z_type == 'File':
       ygg_txt_save()
-    elif '_module' in z_json:
+    elif z_type == 'External Method':
       ygg_module_save()
     else:
       raise LookupError(_('Неизветный объект zope <%s>' % z_json[:1000]))
@@ -203,7 +203,7 @@ def main() -> int:
       continue
     if iface_dir.name.upper() != iface_dir.name:
       continue
-    if iface_dir.name < 'FI':
+    if iface_dir.name < 'INT':
       continue
     settings.source_dir = os.path.join(iface_dir, iface_dir)
     interface_name = interface_copy(settings.source_dir, settings.destination_dir)

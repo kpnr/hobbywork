@@ -58,6 +58,23 @@ def py_zope_patch(src):
       rv = 0
     return rv
 
+  def fix_indent_tabs(lines, lineno, col):
+    RE = re.compile(r'(?x) ^ (?P<indent>(\ *\t)+\ *) (?P<tail>.+) $')
+    rv = 0
+    for idx, line in enumerate(lines, 0):
+      m = RE.match(line)
+      if m is None:
+        continue
+      lines[idx] = m['indent'].replace('\t', ' '*8) + m['tail']
+      rv = 1
+    return rv
+
+  def fix_state_prepare(exception, source):
+    src_lined = source.split('\n')
+    line = exception.lineno - 1
+    col = exception.offset
+    return src_lined, line, col
+
   # src = test_src
   parse_flag = 1
   while parse_flag:
@@ -65,15 +82,14 @@ def py_zope_patch(src):
       parse_flag = 0
       ast = py_parse(src, '', 'exec')
     except TabError as e:
-      line = e.lineno - 1
-      src_lined = src.split('\n')
-      src_lined[line] = src_lined[line].replace('\t', ' '*8)
-      src = '\n'.join(src_lined)
-      parse_flag = 1
+      src_lined, line, col = fix_state_prepare(e, src)
+      if fix_indent_tabs(src_lined, line, col):
+        parse_flag = 1
+        src = '\n'.join(src_lined)
+      else:
+        breakpoint()
     except SyntaxError as e:
-      line = e.lineno - 1
-      col = e.offset
-      src_lined = src.split('\n')
+      src_lined, line, col = fix_state_prepare(e, src)
       if fix_not_eq_op(src_lined, line, col):
         parse_flag = 1
         src = '\n'.join(src_lined)
@@ -82,6 +98,7 @@ def py_zope_patch(src):
         src = '\n'.join(src_lined)
       else:
         breakpoint()
+        raise
   z_ast_transformer = ZAstTransformer()
   ast = z_ast_transformer.visit(ast)
   dst = astor.to_source(ast)

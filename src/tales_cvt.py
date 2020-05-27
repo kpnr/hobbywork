@@ -36,7 +36,7 @@ class Parser_path(sly.Parser):
   @_('p_path', 'p_path T_TAIL')
   def p_path_expr(self, p):
     rv = p.p_path
-    if 1 < len(p):
+    if hasattr(p, 'T_TAIL'):
       rv += ' or ' + tales_expression_to_jinja(p.T_TAIL[1:])
     return rv
 
@@ -81,6 +81,7 @@ def tales_expression_to_jinja(src: str) -> str:
         break
     return parser, src
 
+  src = src.strip()
   parser_name, src = parser_name_and_src_get(src)
   lexer = globals()['Lexer_'+parser_name]()
   parser = globals()['Parser_'+parser_name]()

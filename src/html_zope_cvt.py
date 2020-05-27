@@ -4,9 +4,9 @@ from lxml.html import Element, soupparser, HtmlComment
 from tales_cvt import tales_expression_to_jinja as tal_expression_cvt
 
 ATTRS_ALLOWED = frozenset(
-  'action align bgcolor border cellpadding cellspacing class colspan '
-  'disabled href id language length maxlength method name onblur onclick '
-  'onfocus onkeydown onkeypress onkeyup rules size style type '
+  'action align bgcolor border cellpadding cellspacing checked class colspan '
+  'disabled href id language length maxlength method name onblur onchange onclick '
+  'onfocus onkeydown onkeypress onkeyup onsubmit rules size style tabindex type '
   'valign value width '
   'metal:fill-slot metal:use-macro '
   'tal:define tal:attributes tal:condition tal:content tal:omit-tag tal:repeat tal:replace'.split(' ')
@@ -14,7 +14,9 @@ ATTRS_ALLOWED = frozenset(
 
 def node_visit(el: Element) -> None:
   REPLACE_NAMES = {
-    'aling': 'align'
+    'aling': 'align',
+    'disable': 'disabled',
+    'onsumbit': 'onsubmit',
     }
   if getattr(el, 'tag', '') == 'meta':
     return None
@@ -170,7 +172,7 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
       return
     attrs = el.attrib.pop('tal:attributes', '')
     if attrs:
-      attrs = [a.strip(' ').split(' ', 1) for a in attrs.split(';')]
+      attrs = [a.strip(' ').split(' ', 1) for a in attrs.split(';') if a]
       attrs = {a.strip(' '): tal_content_cvt(v.strip(' ')) for (a, v) in attrs}
       el.attrib.update(attrs)
     omit = el.attrib.pop('tal:omit-tag', None)
