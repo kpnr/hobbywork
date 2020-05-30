@@ -17,6 +17,7 @@ def node_visit(el: Element) -> None:
     'aling': 'align',
     'disable': 'disabled',
     'onsumbit': 'onsubmit',
+    'stype': 'style',
     }
   if getattr(el, 'tag', '') == 'meta':
     return None

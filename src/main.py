@@ -124,6 +124,14 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
         yf.write(z_json['node']['data'])
       return
 
+    def ygg_dtml_save():
+      dtml_name = z_json['path'][-1]
+      dtml_name = path.join(backend_dir, dtml_name)
+      file_describe(dtml_name, dict(type='dtml'))
+      with open(dtml_name, 'wt', encoding='utf8') as yf:
+        yf.write(z_json['node']['raw'])
+      return
+
     z_type = z_json['meta_type']
     if z_type == 'Z SQL Method':
       ygg_sql_save()
@@ -131,14 +139,16 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       ygg_html_save()
     elif z_type == 'Script (Python)':
       ygg_py_save()
-    elif z_type == 'Folder':
+    elif z_type in ('Folder', 'Folder (Ordered)'):
       input(_('WARNING! Folder object at <%s>. Press Enter') % ('/'.join(z_json['path'])))
     elif z_type == 'File':
       ygg_txt_save()
     elif z_type == 'External Method':
       ygg_module_save()
+    elif z_type == 'DTML Document':
+      ygg_dtml_save()
     else:
-      raise LookupError(_('Неизветный объект zope <%s>' % z_json[:1000]))
+      raise LookupError(_('Неизветный объект zope <%s>' % repr(z_json)[:1000]))
     return
 
   def ygg_sql_blocks_save():
@@ -203,7 +213,7 @@ def main() -> int:
       continue
     if iface_dir.name.upper() != iface_dir.name:
       continue
-    if iface_dir.name < 'INT':
+    if iface_dir.name < 'RAN':
       continue
     settings.source_dir = os.path.join(iface_dir, iface_dir)
     interface_name = interface_copy(settings.source_dir, settings.destination_dir)
