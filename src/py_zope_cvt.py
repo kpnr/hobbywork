@@ -35,38 +35,51 @@ class ZAstTransformer(NodeTransformer):
     return rv
 
 def py_zope_patch(src):
-  def fix_not_eq_op(lines, lineno, col):
-    line_str = lines[lineno]
+  def fix_not_eq_op(lines, line_no, col):
+    line_str = lines[line_no]
     test_str = line_str[col - 2 :col]
     if test_str == '<>':
       line_str = line_str[:col-2] + '!=' + line_str[col:]
-      lines[lineno] = line_str
+      lines[line_no] = line_str
       rv = 1
     else:
       rv = 0
     return rv
 
-  def fix_print_stmt(lines, lineno, col):
+  def fix_print_stmt(lines, line_no, col):
     PRINT_RE = re.compile(r'(?x) (?P<indent>\s*) print \s* (?P<arg>[^(\s].*)? $')
-    line_str = lines[lineno]
+    line_str = lines[line_no]
     m = PRINT_RE.match(line_str)
     if m:
       line_str = m['indent'] + 'print(' + m['arg'] + ')'
-      lines[lineno] = line_str
+      lines[line_no] = line_str
       rv = 1
     else:
       rv = 0
     return rv
 
-  def fix_indent_tabs(lines, lineno, col):
-    RE = re.compile(r'(?x) ^ (?P<indent>(\ *\t)+\ *) (?P<tail>.+) $')
+  def fix_indent_tabs(lines, line_no, col):
     rv = 0
-    for idx, line in enumerate(lines, 0):
-      m = RE.match(line)
-      if m is None:
-        continue
-      lines[idx] = m['indent'].replace('\t', ' '*8) + m['tail']
-      rv = 1
+    for line_no, line in enumerate(lines, 0):
+      line_new = ''
+      col_no_new = -1
+      for col_no, char in enumerate(line, 0):
+        col_no_new += 1
+        if ord(' ') < ord(char):
+          line_new += line[col_no:]
+          break
+        elif ord(char) == 9: # TAB char
+          space_cnt = 8 - col_no_new % 8
+          col_no_new += space_cnt - 1
+          line_new += ' ' * space_cnt
+        elif ord(char) == ord(' '):
+          line_new += ' '
+        else:
+          breakpoint()
+          raise TabError('Invalid indent char %s (code=%s)' % (char, ord(char)))
+      if line != line_new:
+        lines[line_no] = line_new
+        rv = 1
     return rv
 
   def fix_state_prepare(exception, source):

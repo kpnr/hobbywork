@@ -213,7 +213,7 @@ def main() -> int:
       continue
     if iface_dir.name.upper() != iface_dir.name:
       continue
-    if iface_dir.name < 'RAN':
+    if iface_dir.name < 'REC':
       continue
     settings.source_dir = os.path.join(iface_dir, iface_dir)
     interface_name = interface_copy(settings.source_dir, settings.destination_dir)
