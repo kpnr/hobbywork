@@ -5,8 +5,8 @@ from tales_cvt import tales_expression_to_jinja as tal_expression_cvt
 
 ATTRS_ALLOWED = frozenset(
   'action align bgcolor border cellpadding cellspacing checked class colspan '
-  'disabled href id language length maxlength method name onblur onchange onclick '
-  'onfocus onkeydown onkeypress onkeyup onsubmit rules size style tabindex type '
+  'disabled href i id language length maxlength method name onblur onchange onclick '
+  'onfocus onkeydown onkeypress onkeyup onsubmit readonly rules size style tabindex type '
   'valign value width '
   'metal:fill-slot metal:use-macro '
   'tal:define tal:attributes tal:condition tal:content tal:omit-tag tal:repeat tal:replace'.split(' ')
@@ -75,7 +75,9 @@ def html_zope_cvt(z_json: Mapping) -> Sequence[str]:
 
     def tal_define_cvt(s: str):
       def tal_to_def_list(s: str) -> Sequence[str]:
-        var_defs_dirty = s.split(';')
+        var_defs_dirty = [x.strip() for x in s.split(';')]
+        if var_defs_dirty[-1] == '':
+          var_defs_dirty = var_defs_dirty[:-1]
         var_defs_clear = []
         var_current = var_defs_dirty.pop(0).strip()
         for d in var_defs_dirty:

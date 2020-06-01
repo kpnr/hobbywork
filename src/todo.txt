@@ -1,2 +1,6 @@
 COUNTER - какие-то подкаталоги. Зачем, почему, как?
 /INCOME/INCOMEHELP - тоже
+
+Сделать правильную обработка tales nocall/call. Сейчас все как nocall
+Разобраться с SyncDict. Is it named mutex?
+Исключение при синтаксических ошибках

@@ -132,6 +132,14 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
         yf.write(z_json['node']['raw'])
       return
 
+    def ygg_sync_dict_save():
+      dict_name = z_json['path'][-1]
+      dict_name = path.join(backend_dir, dict_name+'.mutex')
+      file_describe(dict_name, dict(type='mutex'))
+      with open(dict_name, 'wt', encoding='utf8') as yf:
+        yf.write(z_json['node'] or '')
+      return
+
     z_type = z_json['meta_type']
     if z_type == 'Z SQL Method':
       ygg_sql_save()
@@ -147,6 +155,8 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
       ygg_module_save()
     elif z_type == 'DTML Document':
       ygg_dtml_save()
+    elif z_type == 'SyncDict':
+      ygg_sync_dict_save()
     else:
       raise LookupError(_('Неизветный объект zope <%s>' % repr(z_json)[:1000]))
     return
@@ -213,7 +223,7 @@ def main() -> int:
       continue
     if iface_dir.name.upper() != iface_dir.name:
       continue
-    if iface_dir.name < 'REC':
+    if iface_dir.name < 'WOR':
       continue
     settings.source_dir = os.path.join(iface_dir, iface_dir)
     interface_name = interface_copy(settings.source_dir, settings.destination_dir)

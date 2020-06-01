@@ -28,7 +28,6 @@ class Lexer_path(sly.Lexer):
   T_PATH_SPEC_CHAR = r'[ _.,~-]'
   T_TAIL = r'\|.+'
 
-
 # noinspection PyPep8Naming,PyUnresolvedReferences
 class Parser_path(sly.Parser):
   tokens = Lexer_path.tokens
@@ -66,6 +65,28 @@ class Parser_path(sly.Parser):
     rv = p[0]
     if 1 < len(p):
        rv += p[1]
+    return rv
+
+
+class Lexer_not(object):
+  def tokenize(self, src):
+    return src
+
+class Parser_not(object):
+  def parse(self, tokens):
+    rv = tales_expression_to_jinja(tokens)
+    rv = 'not('+rv+')'
+    return rv
+
+
+class Lexer_nocall(object):
+  def tokenize(self, src):
+    return src
+
+
+class Parser_nocall(object):
+  def parse(self, tokens):
+    rv = tales_expression_to_jinja(tokens)
     return rv
 
 
