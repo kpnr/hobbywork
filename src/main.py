@@ -60,11 +60,15 @@ def settings_get() -> Settings:
   return rv
 
 
-def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
+def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = None) -> str:
   """:returns interface name"""
+  if parents is None:
+    parents = []
+  zope_path = path.join(*(zope_root, *parents))
   sql_list: List[SqlZopeDef] = []
   module_list: MutableMapping[str, dict] = dict()
   files_desc: MutableMapping[str, Any] = dict()
+  subinterface_list: List = []
 
   def file_describe(file_name_full: str, description: Any):
     files_desc[file_name_full] = description
@@ -140,6 +144,13 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
         yf.write(z_json['node'] or '')
       return
 
+    def ygg_subinterface_save():
+      sub_name = z_json['path'][-1]
+      file_describe(path.join(backend_dir, sub_name), dict(type='interface'))
+      file_describe(path.join(frontend_dir, sub_name), dict(type='interface'))
+      subinterface_list.append(sub_name)
+      return
+
     z_type = z_json['meta_type']
     if z_type == 'Z SQL Method':
       ygg_sql_save()
@@ -148,7 +159,7 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
     elif z_type == 'Script (Python)':
       ygg_py_save()
     elif z_type in ('Folder', 'Folder (Ordered)'):
-      input(_('WARNING! Folder object at <%s>. Press Enter') % ('/'.join(z_json['path'])))
+      ygg_subinterface_save()
     elif z_type == 'File':
       ygg_txt_save()
     elif z_type == 'External Method':
@@ -194,10 +205,16 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
                    f"{func_def['id']}\n\n\n")
     return
 
+  def ygg_subinterfaces_save():
+    for sub in subinterface_list:
+      interface_copy(zope_root, ygg_root, parents + [sub])
+    return
+
   zope_meta_dir = path.abspath(path.join(zope_path, '__meta'))
   interface_name = path.basename(zope_path).upper()
-  frontend_dir = path.join(ygg_path, interface_name, 'frontend', interface_name)
-  backend_dir = path.join(ygg_path, interface_name, 'backend')
+  interface_root_name = path.basename(zope_root).upper()
+  frontend_dir = path.join(*(ygg_root, interface_root_name, 'frontend', *parents, interface_name))
+  backend_dir = path.join(*(ygg_root, interface_root_name, 'backend', *parents))
   makedirs(frontend_dir, exist_ok=True)
   makedirs(backend_dir, exist_ok=True)
   for file in scandir(zope_meta_dir):
@@ -208,26 +225,27 @@ def interface_copy(zope_path: DirPath, ygg_path: DirPath) -> str:
     ygg_file_save()
   # finalization
   ygg_sql_blocks_save()
-  # save module blocks
   ygg_module_blocks_save()
-  # save file descriptions
+  ygg_subinterfaces_save()
   files_desc_save()
   return interface_name
 
 
 def main() -> int:
   settings = settings_get()
-  iface_root = settings.source_dir
-  for iface_dir in os.scandir(iface_root):
-    if not iface_dir.is_dir():
-      continue
-    if iface_dir.name.upper() != iface_dir.name:
-      continue
-    if iface_dir.name < 'WOR':
-      continue
-    settings.source_dir = os.path.join(iface_dir, iface_dir)
-    interface_name = interface_copy(settings.source_dir, settings.destination_dir)
-    print(_('Интерфейс %s готов, шеф!') % interface_name)
+  # iface_root = settings.source_dir
+  # for iface_dir in os.scandir(iface_root):
+  #   if not iface_dir.is_dir():
+  #     continue
+  #   if iface_dir.name.upper() != iface_dir.name:
+  #     continue
+  #   if iface_dir.name < ' ':
+  #     continue
+  #   settings.source_dir = os.path.join(iface_dir, iface_dir)
+  #   interface_name = interface_copy(settings.source_dir, settings.destination_dir)
+  #   print(_('Интерфейс %s готов, шеф!') % interface_name)
+  interface_name = interface_copy(settings.source_dir, settings.destination_dir)
+  print(_('Интерфейс %s готов, шеф!') % interface_name)
   return 0
 
 

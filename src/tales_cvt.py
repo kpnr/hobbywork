@@ -17,6 +17,9 @@ class Parser_python(sly.Parser):
     rv = p.T_BODY
     return rv
 
+  def error(self, token):
+    raise SyntaxError('Error token: %s' % (repr(token)))
+
 
 # noinspection PyPep8Naming
 class Lexer_path(sly.Lexer):
@@ -24,7 +27,7 @@ class Lexer_path(sly.Lexer):
   tokens = {T_TAIL, T_ID, T_PATH_SPEC_CHAR}
   literals = {'|', '/', '?'}
 
-  T_ID = r'(?iu)[a-z][a-z0-9_]+'
+  T_ID = r'(?iu)[a-z][a-z0-9_]*'
   T_PATH_SPEC_CHAR = r'[ _.,~-]'
   T_TAIL = r'\|.+'
 
@@ -67,6 +70,9 @@ class Parser_path(sly.Parser):
        rv += p[1]
     return rv
 
+  def error(self, token):
+    raise SyntaxError('Error token: %s' % (repr(token)))
+
 
 class Lexer_not(object):
   def tokenize(self, src):
@@ -89,6 +95,16 @@ class Parser_nocall(object):
     rv = tales_expression_to_jinja(tokens)
     return rv
 
+
+class Lexer_exists(Lexer_nocall):
+  pass
+
+
+class Parser_exists(object):
+  def parse(self, tokens):
+    rv = tales_expression_to_jinja(tokens)
+    rv = 'not(('+rv+') is none)'
+    return rv
 
 def tales_expression_to_jinja(src: str) -> str:
   def parser_name_and_src_get(src: str) -> (str, str):
