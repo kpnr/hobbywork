@@ -4,12 +4,14 @@ from lxml.html import Element, soupparser, HtmlComment
 from tales_cvt import tales_expression_to_jinja as tal_expression_cvt
 
 ATTRS_ALLOWED = frozenset(
-  'action align bgcolor border cellpadding cellspacing checked class colspan '
+  'action align bgcolor border bordercolor cellpadding cellspacing checked class colspan '
   'disabled href i id language length maxlength method name onblur onchange onclick '
-  'onfocus onkeydown onkeypress onkeyup onsubmit readonly rules size style tabindex type '
+  'onfocus oninput onkeydown onkeypress onkeyup '
+  'onsubmit readonly rules size src style tabindex type '
   'valign value width '
   'metal:fill-slot metal:use-macro '
-  'tal:define tal:attributes tal:condition tal:content tal:omit-tag tal:repeat tal:replace'.split(' ')
+  'tal:define tal:attributes tal:condition tal:content '
+  'tal:omit-tag tal:repeat tal:replace'.split(' ')
   )
 
 def node_visit(el: Element) -> None:

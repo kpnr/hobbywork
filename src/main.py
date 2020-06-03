@@ -234,19 +234,19 @@ def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = N
 
 def main() -> int:
   settings = settings_get()
-  # iface_root = settings.source_dir
-  # for iface_dir in os.scandir(iface_root):
-  #   if not iface_dir.is_dir():
-  #     continue
-  #   if iface_dir.name.upper() != iface_dir.name:
-  #     continue
-  #   if iface_dir.name < ' ':
-  #     continue
-  #   settings.source_dir = os.path.join(iface_dir, iface_dir)
-  #   interface_name = interface_copy(settings.source_dir, settings.destination_dir)
-  #   print(_('Интерфейс %s готов, шеф!') % interface_name)
-  interface_name = interface_copy(settings.source_dir, settings.destination_dir)
-  print(_('Интерфейс %s готов, шеф!') % interface_name)
+  iface_root = settings.source_dir
+  for iface_dir in os.scandir(iface_root):
+    if not iface_dir.is_dir():
+      continue
+    if iface_dir.name.upper() != iface_dir.name:
+      continue
+    if iface_dir.name < ' ':
+      continue
+    settings.source_dir = DirPath(os.path.join(iface_dir, iface_dir))
+    interface_name = interface_copy(settings.source_dir, settings.destination_dir)
+    print(_('Интерфейс %s готов, шеф!') % interface_name)
+  # interface_name = interface_copy(settings.source_dir, settings.destination_dir)
+  # print(_('Интерфейс %s готов, шеф!') % interface_name)
   return 0
 
 
