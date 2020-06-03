@@ -1,8 +1,10 @@
-COUNTER - какие-то подкаталоги. Зачем, почему, как?
-/INCOME/INCOMEHELP - тоже
 TR_RECALC/recal.html аттрибут i ????
 
-Сделать правильную обработка tales nocall/call. Сейчас все как nocall
+Сделать правильную обработку tales nocall/call. Сейчас все как nocall
 Разобраться с SyncDict. Is it named mutex?
-Исключение при синтаксических ошибках
-Добавить поддкржку Products.PythonScripts (url_quote)
+Добавить поддержку Products.PythonScripts (url_quote)
+rtl для субинтерфейсов
+
++ Исключение при синтаксических ошибках
++ COUNTER - какие-то подкаталоги. Зачем, почему, как?
++ /INCOME/INCOMEHELP - тоже
