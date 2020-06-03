@@ -145,7 +145,7 @@ def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = N
       return
 
     def ygg_subinterface_save():
-      sub_name = z_json['path'][-1]
+      sub_name = z_json['node']['id']
       file_describe(path.join(backend_dir, sub_name), dict(type='interface'))
       file_describe(path.join(frontend_dir, sub_name), dict(type='interface'))
       subinterface_list.append(sub_name)
@@ -213,7 +213,8 @@ def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = N
   zope_meta_dir = path.abspath(path.join(zope_path, '__meta'))
   interface_name = path.basename(zope_path).upper()
   interface_root_name = path.basename(zope_root).upper()
-  frontend_dir = path.join(*(ygg_root, interface_root_name, 'frontend', *parents, interface_name))
+  frontend_dir = path.join(*(ygg_root, interface_root_name, 'frontend',
+                             interface_root_name, *parents))
   backend_dir = path.join(*(ygg_root, interface_root_name, 'backend', *parents))
   makedirs(frontend_dir, exist_ok=True)
   makedirs(backend_dir, exist_ok=True)
