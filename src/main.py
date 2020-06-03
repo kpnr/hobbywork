@@ -1,3 +1,4 @@
+#!python3.7
 import argparse
 import json
 import os
@@ -104,6 +105,14 @@ def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = N
           yf.write(s + '\n')
       return
 
+    def ygg_js_save() -> None:
+      js_name = z_json['path'][-1]
+      js_name = path.join(frontend_dir, js_name)
+      file_describe(js_name, dict(type='js'))
+      with open(js_name, 'wt', encoding='utf8') as yf:
+        yf.write(z_json['node']['data'] + '\n')
+      return
+
     def ygg_py_save() -> None:
       py_name = z_json['node']['id']
       py_name = path.join(backend_dir, py_name+'.py')
@@ -161,7 +170,14 @@ def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = N
     elif z_type in ('Folder', 'Folder (Ordered)'):
       ygg_subinterface_save()
     elif z_type == 'File':
-      ygg_txt_save()
+      z_sub_type = z_json['node']['content_type']
+      if z_sub_type in {'text/plain', 'text/x-unknown-content-type'}:
+        ygg_txt_save()
+      elif z_sub_type == 'application/x-javascript':
+        ygg_js_save()
+      else:
+        breakpoint()
+        raise LookupError(_('Неизветный тип файла <%s>') % z_sub_type)
     elif z_type == 'External Method':
       ygg_module_save()
     elif z_type == 'DTML Document':
@@ -169,6 +185,7 @@ def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = N
     elif z_type == 'SyncDict':
       ygg_sync_dict_save()
     else:
+      breakpoint()
       raise LookupError(_('Неизветный объект zope <%s>' % repr(z_json)[:1000]))
     return
 
