@@ -1,4 +1,5 @@
 #!python3.7
+import shutil
 import argparse
 import json
 import os
@@ -246,6 +247,12 @@ def interface_copy(zope_root: DirPath, ygg_root: DirPath, parents: List[str] = N
   ygg_module_blocks_save()
   ygg_subinterfaces_save()
   files_desc_save()
+  if not parents:
+    # it is top level
+    shutil.copy(
+      path.join(path.dirname(__file__),'__init__.template'),
+      path.join(ygg_root, interface_root_name, '__init__.py')
+      )
   return interface_name
 
 

@@ -1,0 +1,4 @@
+# -*- coding: utf-8 -*-
+from .zombiend import z 
+
+module = z.Module(__name__.split('.', 1)[0])
