@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
-from .zombiend import z 
+from zombie import undead
 
-module = z.Module(__name__.split('.', 1)[0])
+module = undead.Module(package_name=__package__)
