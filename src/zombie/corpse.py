@@ -41,6 +41,72 @@ class IBox(Box):
     return rv
 
 
+class ZContainers(object):
+  class Manager(object):
+    def __init__(self, container):
+      super().__init__()
+      self._container = container
+      return
+
+    def register_module(self, py_module, *, skip=frozenset()):
+      SKIP_LIST=frozenset('__name__ __doc__ __package__ __loader__ __spec__ __file__ __cached__ '
+        '__builtins__ _endpoints'.split(' '))
+      SKIP_LIST = SKIP_LIST | skip
+      for name, obj in py_module.__dict__.items():
+        if name in SKIP_LIST:
+          continue
+        if callable(obj):
+          self._container[name] = obj
+      return
+
+    def register_symbol(self, name, value):
+      self._container[name] = value
+      return
+
+  @staticmethod
+  def py_path_to_z(py_path):
+    if not py_path:
+      rv = []
+    if py_path[1] == 'backend':
+      rv = py_path[0:1] + py_path[2:]
+    elif py_path[1] == 'frontend':
+      rv = py_path[2:]
+    else:
+      breakpoint()
+      raise ValueError('Invalid py_path %s' % py_path)
+    return rv
+
+  def __init__(self):
+    super().__init__()
+    self._root = dict2(__container=dict2())
+    return
+
+  def manager_get(self, py_path):
+    c = self.py_path_to_sub_container(py_path)
+    m = self.Manager(c)
+    return m
+
+  def py_path_to_sub_container(self, py_path):
+    z_path = self.py_path_to_z(py_path)
+    r = self._root
+    for sub_name in z_path:
+      r = r.setdefault(sub_name, dict2(__container=dict2()))
+    rv = r['__container']
+    return rv
+
+  def py_path_to_container(self, py_path):
+    z_path = self.py_path_to_z(py_path)
+    def g_sub_container():
+      r = self._root
+      for sub_name in z_path:
+        yield r['__container']
+        r = r.setdefault(sub_name, dict2(__container=dict2()))
+      yield r['__container']
+      return
+    rv = ChainBox2(*g_sub_container())
+    return rv
+
+
 class ChainBox(ChainMap):
   def __getattr__(self, item):
     if item == 'maps':
@@ -128,7 +194,7 @@ class str2(str):
 
 def package_dir_get(package_name: str) -> str:
   backend_dir = sys.modules[package_name].__file__
-  backend_dir = os.path.dirname(backend_dir)
+  backend_dir = os.path.abspath(os.path.dirname(backend_dir))
   return backend_dir
 
 
@@ -140,7 +206,7 @@ def z_request_get(y_module) -> ChainBox2:
       SESSION=y_module.heap,
       ),
     {k: str2(v) if isinstance(v, str) and not isinstance(v, str2) else v for k, v in f_request.values.items()},
-    dict(
+    dict2(
       uid=y_module.user.uid,
       headers=f_request.headers,  # TODO: restructure or remove base_layout
       ),
