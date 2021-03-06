@@ -1,0 +1,44 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=Windows-1251">
+</head>
+<body>
+Ждите.
+<pre id="progress" style="font-size: 200%; "></pre>
+<script language="javascript">
+function gel(id){
+    rv = document.getElementById(id);
+    return rv;
+}
+
+var cnt = 0, dict = '', txt = ' ';
+//           1/8    1/4   1/3  3/8   1/2   5/8   2/3   3/4   7/8
+// dict += '\u215b\u00bc\u2153\u215c\u00bd\u215d\u2154\u00be\u215e';
+//           <-      ^    ->          <->
+//dict += '\u2190\u2191\u2192\u2193\u2194\u2195\u21a8';
+(function(){
+  for(var i=0x2550; i <= 0x256c; i++) dict+= String.fromCharCode(i);
+  dict += '\u2580\u2584\u2588\u258c\u2590\u2591\u2592\u2593';
+})()
+
+function progress(){
+    for(var i=txt.length-1, j=cnt++; 0 < j; j = j >> 1, i--){
+        while(i < 0){
+            i++; txt = ' '+txt;
+        }
+        var ch=txt[i];
+        if(j & 1){
+          var idx = dict.indexOf(ch) + 1;
+          ch = dict[ idx % dict.length];
+          txt = txt.slice(0, i) + ch + txt.slice(i+1);
+        }
+    }
+    for(var i=1, rv = '', idx=0; i < txt.length; idx+=i++){
+        rv += txt.slice(idx, idx+i) + '\u000d';
+    }
+    gel('progress').innerText = rv;
+}
+setInterval(progress, 300);
+</script>
+</body>
+</html>
